@@ -100,7 +100,7 @@ void can2_out(char dat0,char dat1,char dat2,char dat3,char dat4,char dat5,char d
 
 //new_rotor[0]++;
 can2_info[ptr_can2_tx_wr]=((8UL)<<16)&0x000f0000UL;
-can2_id[ptr_can2_tx_wr]=0x0000018eUL;
+can2_id[ptr_can2_tx_wr]=0x0000009eUL;
 *((char*)&can2_data[ptr_can2_tx_wr])=dat0;
 *(((char*)&can2_data[ptr_can2_tx_wr])+1)=dat1;
 *(((char*)&can2_data[ptr_can2_tx_wr])+2)=dat2;
