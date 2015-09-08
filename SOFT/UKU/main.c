@@ -1,5 +1,5 @@
 //ветка главная
-
+//1*
                   
 #include "LPC17xx.H"                    /* LPC17xx definitions                */
 #include "simbols.h"
