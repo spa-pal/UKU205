@@ -13,6 +13,7 @@ DO NOT CHANGE ANYTHING BELOW
 #define   CANBitrate125k_60MHz          0x001C001D
 #define   CANBitrate250k_12MHz          0x001C000E
 #define   BITRATE125K25MHZ              0x00140018
+#define 	BITRATE62_5K25MHZ			0x009c0018
 /* Acceptance filter mode in AFMR register */
 #define ACCF_OFF				0x01
 #define ACCF_BYPASS				0x02
@@ -82,6 +83,8 @@ void can1_out_adr(char* ptr,char num);
 void can_in_an(void);
 void can_isr_rx1 (void); 
 void can_isr_tx1 (void);
+void CAN_ISR_Rx2 (void); 
+void can_isr_tx2 (void);
 short can1_init (unsigned int can_btr);
 #define ACCF_IDEN_NUM			1
 #define EXP_STD_ID				0x0e9

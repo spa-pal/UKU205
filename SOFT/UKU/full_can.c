@@ -15,6 +15,12 @@ long can1_data[8];
 long can1_datb[8];
 //unsigned short rotor_can[6];
 
+char ptr_can2_tx_wr,ptr_can2_tx_rd;
+long can2_info[8];
+long can2_id[8];
+long can2_data[8];
+long can2_datb[8];
+
 // FullCAN Message List
 FULLCAN_MSG volatile gFullCANList[MAX_FILTERS];
 
@@ -28,7 +34,7 @@ char bOUT;
 char can_tx_cnt;
 char bOUT_FREE=1;
 char rotor_rotor_rotor[2];
-
+char bOUT_FREE2=1;
 
 volatile uint32_t CANStatus;
 
@@ -87,6 +93,40 @@ for(j=1;j<(lb+1);j++)
 if(r==0)r=0xFF;
 return r;	
 }
+
+//-----------------------------------------------
+void can2_out(char dat0,char dat1,char dat2,char dat3,char dat4,char dat5,char dat6,char dat7)
+{
+
+//new_rotor[0]++;
+can2_info[ptr_can2_tx_wr]=((8UL)<<16)&0x000f0000UL;
+can2_id[ptr_can2_tx_wr]=0x0000018eUL;
+*((char*)&can2_data[ptr_can2_tx_wr])=dat0;
+*(((char*)&can2_data[ptr_can2_tx_wr])+1)=dat1;
+*(((char*)&can2_data[ptr_can2_tx_wr])+2)=dat2;
+*(((char*)&can2_data[ptr_can2_tx_wr])+3)=dat3;
+*((char*)&can2_datb[ptr_can2_tx_wr])=dat4;
+*(((char*)&can2_datb[ptr_can2_tx_wr])+1)=dat5;
+*(((char*)&can2_datb[ptr_can2_tx_wr])+2)=dat6;
+*(((char*)&can2_datb[ptr_can2_tx_wr])+3)=dat7;	
+ptr_can2_tx_wr++;
+if(ptr_can2_tx_wr>=8)ptr_can2_tx_wr=0;
+
+
+if(bOUT_FREE2)
+	{
+	//rotor_rotor_rotor[1]++;
+//	new_rotor[1]++;
+	LPC_CAN2->TFI1=can2_info[ptr_can2_tx_rd];
+     LPC_CAN2->TID1=can2_id[ptr_can2_tx_rd];
+     LPC_CAN2->TDA1=can2_data[ptr_can2_tx_rd];
+     LPC_CAN2->TDB1=can2_datb[ptr_can2_tx_rd];
+     LPC_CAN2->CMR=0x00000021;
+     ptr_can2_tx_rd++;
+     if(ptr_can2_tx_rd>=8)ptr_can2_tx_rd=0;
+     bOUT_FREE2=0;	
+	}
+}	
 
 //-----------------------------------------------
 void can1_out_adr(char* ptr,char num)
@@ -349,7 +389,7 @@ rotor_can[4]++;
 
 
 
-     
+ /*    
 // БПС1 - основной
 else if((RXBUFF[0]==0x30)&&((RXBUFF[1]&0xe0)==0x60)&&
 	((RXBUFF[4]&0xf0)==0xe0)&&((RXBUFF[5]&0xf0)==0x20)&&(RXBUFF[6]==0x02)
@@ -400,7 +440,7 @@ else if((RXBUFF[0]==0x30)&&((RXBUFF[1]&0xe0)==0x60)&&
 	St_[0]&=0x63;
 	St_[1]&=0x63;
      	
-	}	
+	}*/	
 
 // Выравнивающий заряд  часа
 else if((RXBUFF[0]==0x30)&&((RXBUFF[1]&0xe0)==0x60)&&
@@ -875,7 +915,17 @@ if((RXBUFF[0]==0x30)&&((RXBUFF[1]&0xc0)==0x40)&&
 
 CAN_IN_AN_end:
 bIN=0;
-}   
+}
+
+
+//-----------------------------------------------
+void can_in_an2(void)
+{
+if(!bIN) goto CAN_IN_AN2_end; 
+
+CAN_IN_AN2_end:
+}
+   
 /**************************************************************************
 DOES:    Interrupt Service Routine for CAN receive on CAN interface 1
 GLOBALS: Copies the received message into the gFullCANList[] array
@@ -974,12 +1024,6 @@ unsigned int *pDest;
 char temp;
 char *ptr,j;
 
-plazma_can2++;
-
-can_tx_cnt++;
-
-rotor_can[5]++;
-
 if(ptr_can1_tx_wr!=ptr_can1_tx_rd)
 	{
 	LPC_CAN1->TFI1=can1_info[ptr_can1_tx_rd];
@@ -993,45 +1037,6 @@ if(ptr_can1_tx_wr!=ptr_can1_tx_rd)
 else bOUT_FREE=1;
 temp=LPC_CAN1->ICR;
 
-}
-
-
-/**************************************************************************
-Initialization of a CAN interface
-as described in LPC_FullCAN_SW.h
-***************************************************************************/ 
-short can1_init (unsigned int can_btr)
-{
-unsigned int *pSFR; // pointer into SFR space
-unsigned int *pSFR2; // pointer into SFR space
-unsigned int offset; // offset added to pSFR
-                                               
-LPC_SC->PCONP |= (1<<13);  /* Enable CAN1 and CAN2 clock */
-
-LPC_PINCON->PINSEL0 &= ~0x0000000F;  /* CAN1 is p0.0 and p0.1	*/
-LPC_PINCON->PINSEL0 |= 0x00000005;
-
-gCANFilter = 0; // Reset and disable all message filters
-
-LPC_CANAF->AFMR = 0x00000001L; // Acceptance Filter Mode Register = off !
-
-LPC_CAN1->MOD = 1; // Go into Reset mode
-
-LPC_CAN1->IER = 0;// Disable All Interrupts
-
-LPC_CAN1->GSR = 0; // Clear Status register
-
-LPC_CAN1->BTR = can_btr; // Set bit timing
-
-//LPC_CAN1->IER |=(1<<0)|(1<<1)|(1<<9)|(1<<10); // Enable Receive & Transmit Interrupt
-
-LPC_CAN1->MOD = 0; // Enter Normal Operating Mode
-
-
-
-NVIC_EnableIRQ(CAN_IRQn);
-LPC_CAN1->IER =0x03;
-return 1;
 }
 
 /**************************************************************************
@@ -1049,6 +1054,7 @@ unsigned int ID_lower, ID_upper;
 unsigned int candata;
 unsigned int *pAddr;
 
+ 
 
 // Acceptance Filter Mode Register = off !
 LPC_CANAF->AFMR = 0x00000001L;
@@ -1133,22 +1139,211 @@ LPC_CANAF->ENDofTable = p;
 LPC_CANAF->AFMR = 0;
   
 return 1;
+
+/*
+  // Acceptance Filter Mode Register = off !
+LPC_CANAF->AFMR = 0x00000001L;
+
+  if (gCANFilter == 0)
+  { // First call, init entry zero
+    gFullCANList[0].Dat1 = 0x000037FFL; // CAN 1, disabled and unused
+  }
+  if (gCANFilter >= MAX_FILTERS)
+  {
+    return 0;
+  }
+
+  CANID &= 0x000007FFL; // Mask out 11-bit ID
+  CANID |= (can_port << 13); // Put can_port info in bits 13-15
+
+  // Filters must be sorted by interface, then by priority
+  // new filter is sorted into array
+  p = 0;
+  while (p < gCANFilter) // loop through all existing filters 
+  {
+    if ((gFullCANList[p].Dat1 & 0x0000FFFFL) > CANID)
+    {
+      break;
+    }
+    p++;
+  }
+
+  // insert new filter here
+  buf0 = gFullCANList[p].Dat1; // save current entry
+  gFullCANList[p].Dat1 = CANID; // insert the new entry
+
+  // move all remaining entries one row up
+  gCANFilter++;
+  while (p < gCANFilter)
+  {
+    p++;
+    buf1 = gFullCANList[p].Dat1;
+    gFullCANList[p].Dat1 = buf0;
+    buf0 = buf1;
+  }
+
+  // Now work on Acceptance Filter Configuration     
+  // Set CAN filter for 11-bit standard identifiers
+  p = 0;
+
+  // Set pointer for Standard Frame Individual
+  // Standard Frame Explicit
+LPC_CANAF->SFF_sa = p;
+
+  pAddr = (unsigned int *) ACCEPTANCE_FILTER_RAM_BASE;
+  for (n = 0; n < ((gCANFilter+1)/2); n++)
+  {
+    ID_lower = gFullCANList[n * 2].Dat1 & 0x0000FFFFL;
+    ID_upper = gFullCANList[n * 2 + 1].Dat1 & 0x0000FFFFL;
+    candata = (ID_lower << 16) + ID_upper;
+    *pAddr = candata;
+    p += 4;
+    pAddr++;
+  }
+
+  // p is still pointing to ENDofTable;
+  
+  // Set pointer for Standard Frame Groups
+  // Standard Frame Group Start Address Register
+LPC_CANAF->SFF_GRP_sa = p;
+
+  // Set pointer for Extended Frame Individual
+  // Extended Frame Start Address Register
+LPC_CANAF->EFF_sa = p;
+
+  // Set pointer for Extended Frame Groups
+  // Extended Frame Group Start Address Register
+LPC_CANAF->EFF_GRP_sa = p;
+
+  // Set ENDofTable 
+  // End of AF Tables Register
+LPC_CANAF->ENDofTable = p;
+
+  // Acceptance Filter Mode Register, start using filter
+LPC_CANAF->AFMR = 0;
+  
+  return 1;	 */
 }
+
+
+/**************************************************************************
+Initialization of a CAN interface
+as described in LPC_FullCAN_SW.h
+***************************************************************************/ 
+short can1_init (unsigned int can_btr)
+{
+unsigned int *pSFR; // pointer into SFR space
+unsigned int *pSFR2; // pointer into SFR space
+unsigned int offset; // offset added to pSFR
+                                               
+LPC_SC->PCONP |= (1<<13);  /* Enable CAN1 and CAN2 clock */
+
+LPC_PINCON->PINSEL0 &= ~0x0000000F;  /* CAN1 is p0.0 and p0.1	*/
+LPC_PINCON->PINSEL0 |= 0x00000005;
+
+gCANFilter = 0; // Reset and disable all message filters
+
+LPC_CANAF->AFMR = 0x00000001L; // Acceptance Filter Mode Register = off !
+
+LPC_CAN1->MOD = 1; // Go into Reset mode
+
+LPC_CAN1->IER = 0;// Disable All Interrupts
+
+LPC_CAN1->GSR = 0; // Clear Status register
+
+LPC_CAN1->BTR = can_btr; // Set bit timing
+
+//LPC_CAN1->IER |=(1<<0)|(1<<1)|(1<<9)|(1<<10); // Enable Receive & Transmit Interrupt
+
+LPC_CAN1->MOD = 0; // Enter Normal Operating Mode
+
+
+
+NVIC_EnableIRQ(CAN_IRQn);
+LPC_CAN1->IER =0x03;
+return 1;
+}
+
+
+/**************************************************************************
+Initialization of a CAN interface
+as described in LPC_FullCAN_SW.h
+***************************************************************************/ 
+short can2_init (unsigned int can_btr)
+{
+LPC_SC->PCONP |= (1<<14);  /* Enable CAN1 and CAN2 clock */
+
+LPC_PINCON->PINSEL4 &= ~0x0003c000;  /* CAN1 is p0.0 and p0.1	*/
+LPC_PINCON->PINSEL4 |= 0x00014000;
+
+gCANFilter = 0; // Reset and disable all message filters
+
+LPC_CANAF->AFMR = 0x00000001L; // Acceptance Filter Mode Register = off !
+
+LPC_CAN2->MOD = 1; // Go into Reset mode
+
+LPC_CAN2->IER = 0;// Disable All Interrupts
+
+LPC_CAN2->GSR = 0; // Clear Status register
+
+LPC_CAN2->BTR = can_btr; // Set bit timing
+
+//LPC_CAN1->IER |=(1<<0)|(1<<1)|(1<<9)|(1<<10); // Enable Receive & Transmit Interrupt
+
+LPC_CAN2->MOD = 0; // Enter Normal Operating Mode
+
+
+
+NVIC_EnableIRQ(CAN_IRQn);
+LPC_CAN2->IER =0x0003;
+return 1;
+}
+
+
 
 
 //-----------------------------------------------
 void CAN_IRQHandler(void)  
 {
+//can_rotor[0]++;
 CANStatus = LPC_CAN1->ICR;
-plazma_can++;		
+//new_rotor[3]=CANStatus;
+//new_rotor[4]=CANStatus>>16;
+//
+//rotor_rotor_rotor[0]++;
+		
 if ( CANStatus & (1 << 0) )
      {
-	can_isr_rx1();
+	CAN_ISR_Rx1();
+	plazma_can1++;
      }
 
 if ( CANStatus & (1 << 1) )
      {
 	can_isr_tx1();
+	plazma_can2++;
+	
+     }
+
+CANStatus = LPC_CAN2->ICR;
+//new_rotor[3]=CANStatus;
+//new_rotor[4]=CANStatus>>16;
+//
+//rotor_rotor_rotor[0]++;
+plazma_can++;		
+if ( CANStatus & (1 << 0) )
+     {
+	CAN_ISR_Rx2();
+	//plazma_can3++;
+//	cnt_can_pal=0;
+
+     }
+
+if ( CANStatus & (1 << 1) )
+     {
+	can_isr_tx2();
+	 //plazma_can4++;
+	
      }
 
 return;
@@ -1227,6 +1422,152 @@ if (!(LPC_CAN1->RFS & 0xC0000400L))
 LPC_CAN1->CMR = 0x04; // release receive buffer
 
 }
+
+/**************************************************************************
+DOES:    Interrupt Service Routine for CAN receive on CAN interface 1
+GLOBALS: Copies the received message into the gFullCANList[] array
+         Handles semaphore bits as described in LPC user manual
+RETURNS: nothing
+***************************************************************************/ 
+void CAN_ISR_Rx2( void ) 
+{
+unsigned int buf;
+unsigned int *pDest;
+char temp;
+char *ptr,j;
+//can_cnt++;
+
+//rotor_can[0]++;
+//can_debug_plazma[0][0]++;
+//if(C1ICR & 0x00000001L)
+//	{
+//	can_debug_plazma[0][0]++;
+	if (!(LPC_CAN2->RFS & 0xC0000400L))
+    		{ // 11-bit ID, no RTR, matched a filter
+			
+    		//rotor_can[1]++;
+    		// initialize destination pointer
+    		// filter number is in lower 10 bits of C1RFS
+			//plazma_can4=(char)((LPC_CAN2->RFS>>16) & 0x000000FFL);
+    		pDest = (unsigned int *) &(gFullCANList[(LPC_CAN2->RFS & 0x000003FFL)].Dat1);
+    
+		/*	plazma_can_pal[plazma_can_pal_index]=(char)(LPC_CAN2->RDA);
+			plazma_can_pal_index++;
+			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDA)>>8);
+			plazma_can_pal_index++;
+			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDA)>>16);
+			plazma_can_pal_index++;
+			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDA)>>24);
+			plazma_can_pal_index++;
+			plazma_can_pal[plazma_can_pal_index]=(char)(LPC_CAN2->RDB);
+			plazma_can_pal_index++;
+			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDB)>>8);
+			plazma_can_pal_index++;
+			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDB)>>16);
+			plazma_can_pal_index++;
+			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDB)>>24);
+			plazma_can_pal_index++;*/
+
+    		// calculate contents for first entry into FullCAN list
+    		buf = LPC_CAN2->RFS & 0xC00F0000L; // mask FF, RTR and DLC
+    		buf |= 0x01002000L; // set semaphore to 01b and CAN port to 1
+    		buf |= LPC_CAN2->RID & 0x000007FFL; // get CAN message ID
+
+    		// now copy entire message to FullCAN list
+    		*pDest = buf; 
+    		pDest++; // set to gFullCANList[(C1RFS & 0x000003FFL)].DatA
+    		*pDest = LPC_CAN2->RDA;
+			//plazma_can4=(char)LPC_CAN2->RDA; 
+    		pDest++; // set to gFullCANList[(C1RFS & 0x000003FFL)].DatB
+    		*pDest = LPC_CAN2->RDB; 
+
+    		// now set the sempahore to complete
+    		buf |= 0x03000000L; // set semaphore to 11b
+    		pDest -= 2; // set to gFullCANList[(C1RFS & 0x000003FFL)].Dat1
+    		*pDest = buf; 
+    
+		//temp=(char)gFullCANList[0].DatA;
+		temp=(char)(LPC_CAN2->RDA);
+		if(temp==0x30)
+			{
+			 bR=0;
+			 }
+		else bR++;
+	
+		//temp=(char)(((gFullCANList[0].Dat1)>>16)&0x0f); 
+     
+     	//ptr=(char*)(&gFullCANList[0].DatA);
+	
+		if(!bR)
+			{
+			/*for(j=0;j<temp;j++)
+				{
+				RXBUFF[j]=*ptr;
+				ptr++;
+				}*/
+			RXBUFF[0]=(char)(LPC_CAN2->RDA);
+			RXBUFF[1]=(char)((LPC_CAN2->RDA)>>8);
+			RXBUFF[2]=(char)((LPC_CAN2->RDA)>>16);
+			RXBUFF[3]=(char)((LPC_CAN2->RDA)>>24);
+			RXBUFF[4]=(char)(LPC_CAN2->RDB);
+			RXBUFF[5]=(char)((LPC_CAN2->RDB)>>8);
+			RXBUFF[6]=(char)((LPC_CAN2->RDB)>>16);
+			RXBUFF[7]=(char)((LPC_CAN2->RDB)>>24);
+			
+			}
+		else if(bR==1)
+			{
+			RXBUFF[8]=(char)(LPC_CAN2->RDA);
+			RXBUFF[9]=(char)((LPC_CAN2->RDA)>>8);
+			RXBUFF[10]=(char)((LPC_CAN2->RDA)>>16);
+			RXBUFF[11]=(char)((LPC_CAN2->RDA)>>24);
+			RXBUFF[12]=(char)(LPC_CAN2->RDB);
+			RXBUFF[13]=(char)((LPC_CAN2->RDB)>>8);
+			RXBUFF[14]=(char)((LPC_CAN2->RDB)>>16);
+			RXBUFF[15]=(char)((LPC_CAN2->RDB)>>24);
+			} 		
+	
+	
+	
+		
+		temp=((RXBUFF[1]&0x1f)+4);
+    		//rotor_can[2]++;
+		if((CRC1_in()==RXBUFF[temp+1])&&(CRC2_in()==RXBUFF[temp+2])&&bR)
+			{
+  
+			bIN=1;
+  			//rotor_can[3]++;
+  			can_in_an2();
+			
+			}    
+    
+  		}
+
+LPC_CAN2->CMR = 0x04; // release receive buffer
+}
+
+/***************************************************************************/
+void can_isr_tx2 (void) 
+{
+char temp;
+//can2_tx_cnt++;
+
+//=ptr_can2_tx_wr;
+
+if(ptr_can2_tx_wr!=ptr_can2_tx_rd)
+	{
+	LPC_CAN2->TFI1=can2_info[ptr_can2_tx_rd];
+     LPC_CAN2->TID1=can2_id[ptr_can2_tx_rd];
+     LPC_CAN2->TDA1=can2_data[ptr_can2_tx_rd];
+     LPC_CAN2->TDB1=can2_datb[ptr_can2_tx_rd];
+     LPC_CAN2->CMR=0x00000021;
+     ptr_can2_tx_rd++;
+     if(ptr_can2_tx_rd>=8)ptr_can2_tx_rd=0;
+	}
+else bOUT_FREE2=1;
+temp=LPC_CAN2->ICR;
+}
+
 
 
 

@@ -20,6 +20,7 @@
 #include "full_can.h"
 #include "snmp_data_file.h"
 #include "net_config.h"
+#include "cmd.h"
 
 extern U8 own_hw_adr[];
 extern U8  snmp_Community[];
@@ -8480,6 +8481,13 @@ if(lc640_read_int(EE_ETH_IS_ON)==1)
 	//mem_copy (&localm[NETIF_ETH], &ip_config, sizeof(ip_config));
 
 	}
+
+can2_init(BITRATE62_5K25MHZ); 
+//can2_init(BITRATE125K25MHZ);
+//FullCAN_SetFilter(1,0x0e9);
+FullCAN_SetFilter(1,0x18e);
+
+
 bRESET_RESET=0;
 reload_hndl();
 
@@ -8591,6 +8599,7 @@ while (1)
 			} 
 
 //          //uart_out_adr2((char*)adc_buff_,6);
+		can2_out(19,19,GETTM,0,0,0,0,0);
 		}
 	}
   
