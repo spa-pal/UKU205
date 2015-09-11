@@ -5,7 +5,8 @@
 #include "eeprom_map.h"
 #include "control.h"
 #include "25lc640.h"
-//#include <string.h>
+#include "cmd.h"
+#include <string.h>
 
 short volatile gCANFilter = 0;
 char ptr_can1_tx_wr,ptr_can1_tx_rd;
@@ -131,7 +132,7 @@ if(bOUT_FREE2)
 //-----------------------------------------------
 void can1_out_adr(char* ptr,char num)
 {
-plazma_can4++;
+//plazma_can4++;
 if(num<=8)
 	{
 	can1_info[ptr_can1_tx_wr]=(((long)num)<<16)&0x000f0000UL;
@@ -301,7 +302,7 @@ void can_adr_hndl(void)
 void can_in_an(void)
 {
 if(!bIN) goto CAN_IN_AN_end; 
-plazma_can3++;
+//plazma_can3++;
 
 #ifdef OLD_CAN_PROTOKOL
 
@@ -921,7 +922,83 @@ bIN=0;
 //-----------------------------------------------
 void can_in_an2(void)
 {
-if(!bIN) goto CAN_IN_AN2_end; 
+//if(!bIN) goto CAN_IN_AN2_end; 
+can_plazma[2]++;
+
+if((RXBUFF[1]&0xf8)==PUT_LB_TM1)
+     {
+	char temp;
+	temp=RXBUFF[1]&0x07;
+		
+	lakb_damp[temp][0]=RXBUFF[0];
+	mem_copy(&lakb_damp[temp][1],&RXBUFF[2],6);
+	
+	//ccc_plazma[0]++;
+	//ccc_plazma[7]=temp;
+	can_plazma[3]++;
+	}	
+
+if((RXBUFF[1]&0xf8)==PUT_LB_TM2)
+     {
+	char temp;
+	temp=RXBUFF[1]&0x07;
+		
+	lakb_damp[temp][7]=RXBUFF[0];
+	mem_copy(&lakb_damp[temp][8],&RXBUFF[2],6);
+	//ccc_plazma[1]++;
+	//ccc_plazma[8]=temp;
+	can_plazma[4]++;
+	}
+
+if((RXBUFF[1]&0xf8)==PUT_LB_TM3)
+     {
+	char temp;
+	temp=RXBUFF[1]&0x07;
+		
+	lakb_damp[temp][14]=RXBUFF[0];
+	mem_copy(&lakb_damp[temp][15],&RXBUFF[2],6);
+	//ccc_plazma[2]++;
+	//ccc_plazma[9]=temp;
+	can_plazma[5]++;
+
+	}	
+
+if((RXBUFF[1]&0xf8)==PUT_LB_TM4)
+     {
+	char temp;
+	temp=RXBUFF[1]&0x07;
+	
+		
+	lakb_damp[temp][21]=RXBUFF[0];
+	mem_copy(&lakb_damp[temp][22],&RXBUFF[2],6);
+	//ccc_plazma[3]++;
+	//ccc_plazma[10]=temp;
+	can_plazma[6]++;
+	}
+
+if((RXBUFF[1]&0xf8)==PUT_LB_TM5)
+     {
+	char temp;
+	temp=RXBUFF[1]&0x07;
+		
+	lakb_damp[temp][28]=RXBUFF[0];
+	mem_copy(&lakb_damp[temp][29],&RXBUFF[2],6);
+	//ccc_plazma[4]++;
+	//ccc_plazma[11]=temp;
+	can_plazma[7]++;
+	}
+
+if((RXBUFF[1]&0xf8)==PUT_LB_TM6)
+     {
+	char temp;
+	temp=RXBUFF[1]&0x07;
+		
+	lakb_damp[temp][35]=RXBUFF[0];
+	mem_copy(&lakb_damp[temp][36],&RXBUFF[2],6);
+	//ccc_plazma[5]++;
+	//ccc_plazma[12]=temp;	
+	can_plazma[8]++;
+	}
 
 CAN_IN_AN2_end:
 }
@@ -1315,13 +1392,13 @@ CANStatus = LPC_CAN1->ICR;
 if ( CANStatus & (1 << 0) )
      {
 	CAN_ISR_Rx1();
-	plazma_can1++;
+//	plazma_can1++;
      }
 
 if ( CANStatus & (1 << 1) )
      {
 	can_isr_tx1();
-	plazma_can2++;
+//	plazma_can2++;
 	
      }
 
@@ -1330,20 +1407,20 @@ CANStatus = LPC_CAN2->ICR;
 //new_rotor[4]=CANStatus>>16;
 //
 //rotor_rotor_rotor[0]++;
-plazma_can++;		
+//plazma_can++;		
 if ( CANStatus & (1 << 0) )
      {
 	CAN_ISR_Rx2();
 	//plazma_can3++;
 //	cnt_can_pal=0;
-
+	can_plazma[0]++;
      }
 
 if ( CANStatus & (1 << 1) )
      {
 	can_isr_tx2();
 	 //plazma_can4++;
-	
+	can_plazma[1]++;
      }
 
 return;
@@ -1356,7 +1433,7 @@ unsigned int buf;
 unsigned int *pDest;
 char temp;
 char *ptr,j;
-plazma_can1++;
+//plazma_can1++;
 if (!(LPC_CAN1->RFS & 0xC0000400L))
      {
       
@@ -1435,39 +1512,17 @@ unsigned int buf;
 unsigned int *pDest;
 char temp;
 char *ptr,j;
-//can_cnt++;
 
-//rotor_can[0]++;
-//can_debug_plazma[0][0]++;
-//if(C1ICR & 0x00000001L)
-//	{
-//	can_debug_plazma[0][0]++;
-	if (!(LPC_CAN2->RFS & 0xC0000400L))
-    		{ // 11-bit ID, no RTR, matched a filter
-			
-    		//rotor_can[1]++;
+
+
+  	if (!(LPC_CAN2->RFS & 0xC0000400L))
+  		{ // 11-bit ID, no RTR, matched a filter
+		
+		//rotor_can[1]++;
     		// initialize destination pointer
     		// filter number is in lower 10 bits of C1RFS
-			//plazma_can4=(char)((LPC_CAN2->RFS>>16) & 0x000000FFL);
     		pDest = (unsigned int *) &(gFullCANList[(LPC_CAN2->RFS & 0x000003FFL)].Dat1);
     
-		/*	plazma_can_pal[plazma_can_pal_index]=(char)(LPC_CAN2->RDA);
-			plazma_can_pal_index++;
-			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDA)>>8);
-			plazma_can_pal_index++;
-			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDA)>>16);
-			plazma_can_pal_index++;
-			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDA)>>24);
-			plazma_can_pal_index++;
-			plazma_can_pal[plazma_can_pal_index]=(char)(LPC_CAN2->RDB);
-			plazma_can_pal_index++;
-			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDB)>>8);
-			plazma_can_pal_index++;
-			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDB)>>16);
-			plazma_can_pal_index++;
-			plazma_can_pal[plazma_can_pal_index]=(char)((LPC_CAN2->RDB)>>24);
-			plazma_can_pal_index++;*/
-
     		// calculate contents for first entry into FullCAN list
     		buf = LPC_CAN2->RFS & 0xC00F0000L; // mask FF, RTR and DLC
     		buf |= 0x01002000L; // set semaphore to 01b and CAN port to 1
@@ -1476,8 +1531,7 @@ char *ptr,j;
     		// now copy entire message to FullCAN list
     		*pDest = buf; 
     		pDest++; // set to gFullCANList[(C1RFS & 0x000003FFL)].DatA
-    		*pDest = LPC_CAN2->RDA;
-			//plazma_can4=(char)LPC_CAN2->RDA; 
+    		*pDest = LPC_CAN2->RDA; 
     		pDest++; // set to gFullCANList[(C1RFS & 0x000003FFL)].DatB
     		*pDest = LPC_CAN2->RDB; 
 
@@ -1486,62 +1540,23 @@ char *ptr,j;
     		pDest -= 2; // set to gFullCANList[(C1RFS & 0x000003FFL)].Dat1
     		*pDest = buf; 
     
-		//temp=(char)gFullCANList[0].DatA;
-		temp=(char)(LPC_CAN2->RDA);
-		if(temp==0x30)
-			{
-			 bR=0;
-			 }
-		else bR++;
+		temp=(char)gFullCANList[0].DatA;
+		//if(temp==0x30) bR=0;
+		//else bR++;
 	
-		//temp=(char)(((gFullCANList[0].Dat1)>>16)&0x0f); 
+		temp=(char)(((gFullCANList[0].Dat1)>>16)&0x0f); 
      
-     	//ptr=(char*)(&gFullCANList[0].DatA);
+     	ptr=(char*)(&gFullCANList[0].DatA);
 	
-		if(!bR)
+		for(j=0;j<temp;j++)
 			{
-			/*for(j=0;j<temp;j++)
-				{
-				RXBUFF[j]=*ptr;
-				ptr++;
-				}*/
-			RXBUFF[0]=(char)(LPC_CAN2->RDA);
-			RXBUFF[1]=(char)((LPC_CAN2->RDA)>>8);
-			RXBUFF[2]=(char)((LPC_CAN2->RDA)>>16);
-			RXBUFF[3]=(char)((LPC_CAN2->RDA)>>24);
-			RXBUFF[4]=(char)(LPC_CAN2->RDB);
-			RXBUFF[5]=(char)((LPC_CAN2->RDB)>>8);
-			RXBUFF[6]=(char)((LPC_CAN2->RDB)>>16);
-			RXBUFF[7]=(char)((LPC_CAN2->RDB)>>24);
-			
+			RXBUFF[j]=*ptr;
+			ptr++;
 			}
-		else if(bR==1)
-			{
-			RXBUFF[8]=(char)(LPC_CAN2->RDA);
-			RXBUFF[9]=(char)((LPC_CAN2->RDA)>>8);
-			RXBUFF[10]=(char)((LPC_CAN2->RDA)>>16);
-			RXBUFF[11]=(char)((LPC_CAN2->RDA)>>24);
-			RXBUFF[12]=(char)(LPC_CAN2->RDB);
-			RXBUFF[13]=(char)((LPC_CAN2->RDB)>>8);
-			RXBUFF[14]=(char)((LPC_CAN2->RDB)>>16);
-			RXBUFF[15]=(char)((LPC_CAN2->RDB)>>24);
-			} 		
-	
-	
-	
-		
-		temp=((RXBUFF[1]&0x1f)+4);
-    		//rotor_can[2]++;
-		if((CRC1_in()==RXBUFF[temp+1])&&(CRC2_in()==RXBUFF[temp+2])&&bR)
-			{
-  
-			bIN=1;
-  			//rotor_can[3]++;
-  			can_in_an2();
-			
-			}    
+		can_in_an2();
+	    
     
-  		}
+  	}
 
 LPC_CAN2->CMR = 0x04; // release receive buffer
 }

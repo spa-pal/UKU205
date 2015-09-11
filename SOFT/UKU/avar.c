@@ -5,6 +5,7 @@
 #include "eeprom_map.h"
 #include "25lc640.h"
 #include "uart0.h"
+#include "snmp_data_file.h"
 
 //-----------------------------------------------
 //Аварии источников

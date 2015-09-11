@@ -6,6 +6,7 @@
 #include "control.h"
 #include "cmd.c"
 #include "eeprom_map.h"
+#include "25lc640.h"
 
 
 char bRXIN2;

@@ -225,7 +225,7 @@ extern signed short unet_store;
 //Индикация
 typedef struct  
 {
-enum {iMn,iSrv_sl,iNet,iSet,iBat,iSrc,iS2,iSet_prl,iK_prl,iDnd,iK,
+enum {iMn,iSrv_sl,iNet,iSet,iBat,iBat_li,iSrc,iS2,iSet_prl,iK_prl,iDnd,iK,
 	iSpcprl,iSpc,k,Crash_0,Crash_1,iKednd,
 	iLoad,iSpc_prl_vz,iSpc_prl_ke,iKe,iVz,iAVAR,iStr,iVrs,iPrltst,iApv,
 	iK_src,iK_bat,iK_load,iK_net,iTst,iTst_klbr,iTst_BPS1,iTst_BPS2,
@@ -507,7 +507,8 @@ extern unsigned short rotor_can[6];
 extern unsigned short cnt_sec;
 extern char plazma_suzun;
 extern char uart_plazma;
-extern char plazma_can,plazma_can1,plazma_can2,plazma_can3,plazma_can4;
+//extern char plazma_can,plazma_can1,plazma_can2,plazma_can3,plazma_can4;
+extern short can_plazma[10];
 extern short snmp_plazma;
 
 //-----------------------------------------------
@@ -515,7 +516,80 @@ extern short snmp_plazma;
 
 extern const char* DEVICE_NAME[20];
 
+//***********************************************
+//Состояние батарей
+typedef struct
+     {
+	char 		_cnt_to_block;
+	signed short	_Ub;
+     signed short	_Ubm;
+     signed short	_dUbm;
+	signed short	_Ib;
+	signed short	_Tb;
+	char 		_nd;
+	char 		_cnt_wrk;
+	char 		_wrk;
+	unsigned short _zar;
+	char 		_full_ver;
+	signed long 	_zar_cnt;
+	signed long 	_zar_cnt_ke;
+	unsigned short _Iintegr,_Iintegr_; 
+	signed short 	_u_old[8];
+	signed short	_u_old_cnt;
+	unsigned long 	_wrk_date[2];
+	char 		_rel_stat;
+	char			_av;
+	char			_time_cnt;
+	char 		_temper_stat;
+	//0бит - подогрев
+	//1бит - перегрев
+	signed short 	_sign_temper_cnt;
+	signed short 	_max_temper_cnt;
+	signed long 	_resurs_cnt;
+	signed short 	_cnt_as; 	//счетчик несимметрии, считает до 5 минут при выполнении условий несимметрии, когда досчитывает - пишет в журнал
+     //signed short   _max_cell_volt;
+	//signed short   _min_cell_volt;
+	} BAT_STAT; 
+extern BAT_STAT bat[2],bat_ips;
+extern signed short		bat_u_old_cnt;
+extern signed short 	Ib_ips_termokompensat;
 
+//***********************************************
+//Литиевые АКБ
+typedef struct
+     {
+	signed short	_max_cell_volt;
+	signed short	_min_cell_volt;
+	signed short	_max_cell_temp;
+	signed short	_min_cell_temp;
+	signed short	_tot_bat_volt;
+	signed short	_ch_curr;
+	signed short	_dsch_curr;
+	signed short	_rat_cap;
+	signed short	_s_o_h;
+	signed short	_s_o_c;
+	signed short	_c_c_l_v;
+	signed short	_r_b_t;
+	signed short	_b_p_ser_num;
+	signed short   _flags1;
+	signed short 	_flags2;
+	signed short 	_bRS485ERR;
+	signed short	_rs485_cnt;
+	signed short 	_cnt;
+	signed short 	_battCommState;	//0 - норма, 1 - отсутствует связь промежуточной платы и батареи(RS485), 2 - отсутствует связь с промежуточной платой (KAN) 	
+	signed short   _battIsOn;		//0 - отсутствует, 1 - присутствует
+	signed short 	_isOnCnt;
+
+	} LAKB_STAT; 
+extern LAKB_STAT lakb[7];
+extern char lakb_damp[7][60];
+extern char bLAKB_KONF_CH;
+extern char bLAKB_KONF_CH_old;
+extern char lakb_ison_mass[7];
+extern short lakb_mn_ind_cnt;
+extern char bLAKB_KONF_CH_EN;
+extern char bRS485ERR;
+extern short LBAT_STRUKT;
 
 
 
