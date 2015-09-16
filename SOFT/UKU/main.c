@@ -4064,7 +4064,7 @@ fuse_av_stat[2]=0;
           {
           b[ptr_ind++]=a;
           ind=iDeb;
-          sub_ind=3;
+          sub_ind=10;
           }
      else 
           {

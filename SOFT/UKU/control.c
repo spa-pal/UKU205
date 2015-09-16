@@ -1071,7 +1071,7 @@ char temp;
 signed char temp_s;
 
 static char plpl;
-
+char i;
 
 temp_SL=(signed long)adc_buff_[17];		 
 temp_SL*=Kubat;							 
@@ -1419,6 +1419,59 @@ data_rs0[15]=(char)(((BAT_C_REAL/10)+1)&0x7F);
 
 data_rs0[16]=(char)((zar_percent+1)&0x7f);
 
+
+for(i=0;i<7;i++)
+	{
+	lakb[i]._rat_cap= (lakb_damp[i][13]*256)+ lakb_damp[i][14];
+	lakb[i]._max_cell_volt= (lakb_damp[i][0]*256)+ lakb_damp[i][1];
+	lakb[i]._min_cell_volt= (lakb_damp[i][2]*256)+ lakb_damp[i][3];
+	lakb[i]._max_cell_temp= lakb_damp[i][4];
+	lakb[i]._min_cell_temp= lakb_damp[i][5];
+	lakb[i]._tot_bat_volt= (lakb_damp[i][6]*256)+ lakb_damp[i][7];
+	lakb[i]._ch_curr= (lakb_damp[i][8]*256)+ lakb_damp[i][8];
+	lakb[i]._dsch_curr= (lakb_damp[i][10]*256)+ lakb_damp[i][11];
+	lakb[i]._s_o_c= lakb_damp[i][12];
+	lakb[i]._r_b_t= lakb_damp[i][15];
+	lakb[i]._c_c_l_v= (lakb_damp[i][16]*256)+ lakb_damp[i][17];
+	lakb[i]._s_o_h= lakb_damp[i][18];
+
+	if(lakb[i]._rat_cap==0)
+		{
+		if(lakb[i]._isOnCnt)
+			{
+			lakb[i]._isOnCnt--;
+			if(lakb[i]._isOnCnt==0)
+				{
+				if(lakb[i]._battIsOn!=0) bLAKB_KONF_CH=1;
+				}
+			}
+		}
+	else 
+		{
+		if(lakb[i]._isOnCnt<50)
+			{
+			lakb[i]._isOnCnt++;
+			if(lakb[i]._isOnCnt==50)
+				{
+				if(lakb[i]._battIsOn!=1) bLAKB_KONF_CH=1;
+				}
+			}
+		}
+	gran(&lakb[i]._isOnCnt,0,50);
+
+	
+
+	}
+
+if(lakb_damp[0][34]==100)
+	{
+	bRS485ERR=1;
+	}
+if(lakb_damp[0][34]==0)
+	{
+	if(bRS485ERR)bLAKB_KONF_CH=1;
+	bRS485ERR=0;
+	}
 
 
 
