@@ -256,7 +256,7 @@ enum {iMn,iSrv_sl,iNet,iSet,iBat,iBat_li,iSrc,iS2,iSet_prl,iK_prl,iDnd,iK,
 	iJAv_src2,iJAv_bat,iJAv_bat_sel,iAusw,iAusw_prl,iAusw_set,iK_t_out,
 	iJ_bat_ke_sel,iJ_bat_ke,iJ_bat_vz_sel,iJ_bat_vz,iJ_bat_wrk_sel,iJ_bat_wrk,
 	iExt_set,iExt_dt,iExt_sk,iAvz,iJAv_src1_sel,iJAv_src2_sel,iLog,iLog_,
-	iLan_set,iSet_,iTst_full,iSet_rav,iSet_rav_}i;
+	iLan_set,iSet_,iTst_full,iSet_rav,iSet_rav_,iBatSetupQuest,iK_bat_li}i;
 
 signed char s_i;
 signed char s_i1;
@@ -308,7 +308,7 @@ extern signed short Ktout[3];
 
 extern signed short MAIN_BPS;
 extern signed short UMAX;
-extern signed short UB0;
+extern signed short UBMAX;
 extern signed short UB20;
 extern signed short TMAX;
 extern signed short AV_OFF_AVT;
@@ -335,6 +335,7 @@ extern signed short NUMSK;
 extern signed short BAT_C_REAL;
 extern signed short BAT_C_NOM;
 extern signed short BAT_RESURS;
+extern signed short NUMLBAT;
 
 //signed short ZAR_CNT,ZAR_CNT_KE;
 //signed short BAT_RESURS;
@@ -441,7 +442,7 @@ extern short main_cnt;
 
 //-----------------------------------------------
 //Состояние батареи
-extern signed short t_b,Ubat,Ibat;
+extern signed short t_b,Ubat,Ibat,Ubat_dac;
 extern signed short Ubat_part[4];			//напряжения промежуточных точек батареи относительно земли
 extern signed short Ubat_e[5];		    	//напряжения банок батареи
 extern signed long zar_cnt,zar_cnt_ke;
@@ -572,7 +573,7 @@ typedef struct
      //signed short   _max_cell_volt;
 	//signed short   _min_cell_volt;
 	} BAT_STAT; 
-extern BAT_STAT bat[2],bat_ips;
+extern BAT_STAT bat[7],bat_ips;
 extern signed short		bat_u_old_cnt;
 extern signed short 	Ib_ips_termokompensat;
 

@@ -234,7 +234,7 @@ snmp_zv_en=ZV_ON;
 snmp_alarm_auto_disable=AV_OFF_AVT;
 snmp_bat_test_time=TBAT;
 snmp_u_max=UMAX;
-snmp_u_0_grad=UB0;
+snmp_u_0_grad=UBMAX;
 snmp_u_20_grad=UB20;
 snmp_u_sign=USIGN;
 snmp_u_min_power=UMN;
@@ -597,7 +597,7 @@ void snmp_u_0_grad_write (int mode)
 {
 if(mode==MIB_WRITE)
 	{
-     lc640_write_int(EE_UB0,snmp_u_0_grad);
+     lc640_write_int(EE_UBMAX,snmp_u_0_grad);
 	}
 }
 //-----------------------------------------------

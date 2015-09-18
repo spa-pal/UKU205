@@ -334,7 +334,7 @@ else
 				
      	if(bit_minus)
      		{
-     		if((Uload<u_necc)&&((u_necc-Uload)>=((UB0-UB20)/4)))
+     		if((Uload<u_necc)&&((u_necc-Uload)>=((UBMAX-UB20)/4)))
      			{
      			if((cntrl_stat<1000)&&!cnt_blok)
      				{
@@ -350,7 +350,7 @@ else
                     		}
      				} 	
          			}
-    			else if((Uload<u_necc)&&((u_necc-Uload)<((UB0-UB20)/4)))
+    			else if((Uload<u_necc)&&((u_necc-Uload)<((UBMAX-UB20)/4)))
      			{
      			if(cntrl_stat<1020)
      				{
@@ -358,7 +358,7 @@ else
      				//plazma=52;
                     	}
          			}      
-  			else if((Uload>u_necc)&&((Uload-u_necc)>=((UB0-UB20)/4)))
+  			else if((Uload>u_necc)&&((Uload-u_necc)>=((UBMAX-UB20)/4)))
      			{
      			if((cntrl_stat>20)&&!cnt_blok)
      				{
@@ -376,7 +376,7 @@ else
          			}
                     	
          		
-    			else if((Uload>u_necc)&&((Uload-u_necc)<((UB0-UB20)/4)))
+    			else if((Uload>u_necc)&&((Uload-u_necc)<((UBMAX-UB20)/4)))
      			{
      			if(cntrl_stat)
      				{
@@ -1076,27 +1076,8 @@ char i;
 temp_SL=(signed long)adc_buff_[17];		 
 temp_SL*=Kubat;							 
 temp_SL/=5000L;
-Ubat=(signed short)temp_SL;
+Ubat_dac=(signed short)temp_SL;
 
-temp_SL=(signed long)adc_buff_[7];		 
-temp_SL*=Kubat_part[0];							 
-temp_SL/=5000L;
-Ubat_part[0]=(signed short)temp_SL;
-
-temp_SL=(signed long)adc_buff_[4];		 
-temp_SL*=Kubat_part[1];							 
-temp_SL/=5000L;
-Ubat_part[1]=(signed short)temp_SL;
-
-temp_SL=(signed long)adc_buff_[1];		 
-temp_SL*=Kubat_part[2];							 
-temp_SL/=5000L;
-Ubat_part[2]=(signed short)temp_SL;
-
-temp_SL=(signed long)adc_buff_[10];		 
-temp_SL*=Kubat_part[3];							 
-temp_SL/=5000L;
-Ubat_part[3]=(signed short)temp_SL;
 
 temp_SL=(signed long)adc_buff_[25];
 temp_SL-=Kibat0;
@@ -1133,6 +1114,18 @@ if((kb_full_ver)&&(abs(Ibat)>IKB))
      bat_ver_cnt=TBAT*300;
 	//zar_superviser_start();
 	}
+
+
+
+for(i=0;i<7;i++)
+	{
+	if(lakb[i]._battIsOn) 
+		{
+		bat[i]._Ub=lakb[i]._tot_bat_volt;
+		}
+	}
+
+
 
 
 if((Ubat>=100)&&(MSG_IND2OUT_DIS_BAT==0)) Uload=Ubat;
@@ -1740,7 +1733,7 @@ void u_necc_hndl(void)
 {
 signed long temp_L;
 
-
+/*
 if(t_b<=0) temp_L=UB0;
 else if(t_b>=40) temp_L=(UB20*2U)-UB0;
 else
@@ -1749,7 +1742,9 @@ else
 	temp_L*=t_b;
 	temp_L/=200;
 	temp_L+=UB0;
-	}
+	}*/
+
+temp_L=lakb[0]._tot_bat_volt+5;
 	
 if(spc_stat==spc_VZ) 
 	{
@@ -1781,6 +1776,14 @@ else if((ind==iTst_BPS12)&&(sub_ind==0))
 
 else if(!NUMBAT) u_necc=U0B;	
 else u_necc=u_necc_;		
+
+
+if(lakb[0]._battCommState)
+	{
+	u_necc=U0B;
+	}
+if(u_necc>=UBMAX) u_necc=UBMAX;
+
 
 temp_L=(signed long) u_necc;
 temp_L*=99L;
@@ -2408,7 +2411,7 @@ void def_set(int umax__,int ub0__,int ub20__,int usign__,int imax__,int uob__,in
 lc640_write_int(EE_NUMIST,numi);
 lc640_write_int(EE_MAIN_BPS,0);
 lc640_write_int(EE_UMAX,umax__);
-lc640_write_int(EE_UB0,ub0__);
+lc640_write_int(EE_UBMAX,ub0__);
 lc640_write_int(EE_UB20,ub20__);
 lc640_write_int(EE_TMAX,60);
 //lc640_write_int(EE_C_BAT,180);

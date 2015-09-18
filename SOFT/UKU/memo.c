@@ -37,7 +37,7 @@ Ktout[2]=lc640_read_int(KTOUT2);
 	
 MAIN_BPS=lc640_read_int(EE_MAIN_BPS);
 UMAX=lc640_read_int(EE_UMAX);
-UB0=lc640_read_int(EE_UB0);
+UBMAX=lc640_read_int(EE_UBMAX);
 UB20=lc640_read_int(EE_UB20);
 TMAX=lc640_read_int(EE_TMAX);
 //C_BAT=lc640_read_int(EE_C_BAT);

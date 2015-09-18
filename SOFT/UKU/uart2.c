@@ -859,7 +859,7 @@ AÂ: Àâàğèéíîñòü âõîäà (1 - àêòèâíî), ("Àâàğèÿ").*/
      	if(UIB2[5]==20)		*((signed short*)&memo_out2[6])=MAIN_BPS;
      	else if(UIB2[5]==40)	*((signed short*)&memo_out2[6])=ZV_ON;
      	else if(UIB2[5]==42)	*((signed short*)&memo_out2[6])=TBAT;
-     	else if(UIB2[5]==50)	*((signed short*)&memo_out2[6])=UB0;
+     	else if(UIB2[5]==50)	*((signed short*)&memo_out2[6])=UBMAX;
      	else if(UIB2[5]==51)	*((signed short*)&memo_out2[6])=UB20;   	     	
      	else if(UIB2[5]==52)	*((signed short*)&memo_out2[6])=USIGN;
     		else if(UIB2[5]==53)	*((signed short*)&memo_out2[6])=UMN;     	
@@ -1024,18 +1024,18 @@ AÂ: Àâàğèéíîñòü âõîäà (1 - àêòèâíî), ("Àâàğèÿ").*/
      			{
      			if((ttt>=10)&&(ttt<=1000))
      				{
-     				UB0=ttt;
+     				UBMAX=ttt;
      				}
      			else memo_out2[6]=0x1;	
      			}
      		
-     		else if(UIB2[6]==0x33)UB0++;
-      		else if(UIB2[6]==0x44)UB0+=ttt;
-     		else if(UIB2[6]==0x55)UB0--;
-      		else if(UIB2[6]==0x66)UB0-=ttt;
+     		else if(UIB2[6]==0x33)UBMAX++;
+      		else if(UIB2[6]==0x44)UBMAX+=ttt;
+     		else if(UIB2[6]==0x55)UBMAX--;
+      		else if(UIB2[6]==0x66)UBMAX-=ttt;
       		
-      		gran(&UB0,10,1000);	  			
-     		lc640_write_int(EE_UB0,UB0);
+      		gran(&UBMAX,10,1000);	  			
+     		lc640_write_int(EE_UBMAX,UBMAX);
      		}
      			
      	else if(UIB2[5]==51)     		

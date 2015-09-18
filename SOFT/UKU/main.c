@@ -96,7 +96,7 @@ signed short Ktout[3];
 
 signed short MAIN_BPS;
 signed short UMAX;
-signed short UB0;
+signed short UBMAX;
 signed short UB20;
 signed short TMAX;
 signed short AV_OFF_AVT;
@@ -123,6 +123,7 @@ signed short NUMSK;
 signed short BAT_C_REAL;
 signed short BAT_C_NOM;
 signed short BAT_RESURS;
+signed short NUMLBAT;
 
 //signed short ZAR_CNT,ZAR_CNT_KE;
 //signed short BAT_RESURS;
@@ -225,7 +226,7 @@ short main_cnt;
 
 //-----------------------------------------------
 //Состояние батареи
-signed short t_b,Ubat,Ibat;
+signed short t_b,Ubat,Ibat,Ubat_dac;
 signed short Ubat_part[4];		//напряжения промежуточных точек батареи относительно земли
 signed short Ubat_e[5];		    	//напряжения банок батареи
 signed long zar_cnt,zar_cnt_ke;
@@ -348,7 +349,7 @@ char bRESET_RESET=0;
 
 //***********************************************
 //Состояние батарей
-BAT_STAT bat[2],bat_ips;
+BAT_STAT bat[7],bat_ips;
 signed short		bat_u_old_cnt;
 signed short 		Ib_ips_termokompensat;
 
@@ -639,7 +640,7 @@ else
 //-----------------------------------------------
 void ind_hndl(void)
 {
-//const char* ptr;
+const char* ptrs_bat[7];
 const char* ptrs[40];
 const char* sub_ptrs[30];
 static char sub_cnt,sub_cnt1;
@@ -1252,18 +1253,36 @@ else if(ind==iMn)
 	ptrs[1]=		" Uб=   lВ Iб=    @А ";
      ptrs[2]=		" Uн=   #В Iн=    $А ";
      ptrs[3]=		" 0%:0^:0& 0</>  /0{ ";
-     ptrs[4]=		" Батарея            ";
-     ptrs[5]=		" БПС1               "; 
-	ptrs[6]=		" БПС2               ";
-     ptrs[7]=		" Нагрузка           ";
-     ptrs[8]=		" Сеть               ";
-     ptrs[9]=		" Спецфункции        ";
-     ptrs[10]=		" Журнал событий     ";
-	ptrs[11]=		" Батарейный журнал  ";
+
+ 	ptrs_bat[0]=									" Батарея N1         ";
+     ptrs_bat[1]=									" Батарея N2         ";
+ 	ptrs_bat[2]=									" Батарея N3         ";
+     ptrs_bat[3]=									" Батарея N4         ";
+ 	ptrs_bat[4]=									" Батарея N5         ";
+     ptrs_bat[5]=									" Батарея N6         ";
+ 	ptrs_bat[6]=									" Батарея N7         ";
+     
+ 	ptrs[4]=										ptrs_bat[lakb_ison_mass[0]];
+     ptrs[5]=										ptrs_bat[lakb_ison_mass[1]];
+ 	ptrs[6]=										ptrs_bat[lakb_ison_mass[2]];
+     ptrs[7]=										ptrs_bat[lakb_ison_mass[3]];
+ 	ptrs[8]=										ptrs_bat[lakb_ison_mass[4]];
+     ptrs[9]=										ptrs_bat[lakb_ison_mass[5]];
+ 	ptrs[10]=										ptrs_bat[lakb_ison_mass[6]];
+
+
+     //ptrs[4]=		" Батарея            ";
+     ptrs[4+NUMLBAT]=		" БПС1               "; 
+	ptrs[5+NUMLBAT]=		" БПС2               ";
+     ptrs[6+NUMLBAT]=		" Нагрузка           ";
+     ptrs[7+NUMLBAT]=		" Сеть               ";
+     ptrs[8+NUMLBAT]=		" Спецфункции        ";
+     ptrs[9+NUMLBAT]=		" Журнал событий     ";
+	ptrs[10+NUMLBAT]=		" Батарейный журнал  ";
      //ptrs[12]=		" Паспорт            ";
-     ptrs[12]=		" Установки          ";
-     ptrs[13]=		" Сброс аварий       ";
-     ptrs[14]=sm_exit;
+     ptrs[11+NUMLBAT]=		" Установки          ";
+     ptrs[12+NUMLBAT]=		" Сброс аварий       ";
+     ptrs[13+NUMLBAT]=sm_exit;
      
      if(sub_ind==0)index_set=0;
 	else if((index_set-sub_ind)>2)index_set=sub_ind+2;
@@ -1278,8 +1297,9 @@ else if(ind==iMn)
 	     else if((index_set-sub_ind)==2)lcd_buffer[20]=1;
 	     }	
 	
- 	int2lcd(Ubat,'l',1);
- 	int2lcd_mmm(Ibat,'@',2);
+ 	int2lcd(lakb[0]._tot_bat_volt/10,'l',1);
+	if(lakb[0]._ch_curr) int2lcd_mmm(lakb[0]._ch_curr/10,'@',1);
+	else int2lcd_mmm(-lakb[0]._dsch_curr/10,'@',1);
  	int2lcd(Uload,'#',1);
  	int2lcd(iload,'$',1); 	
  	
@@ -1402,7 +1422,7 @@ int2lcdyx(index_set,0,1,0);*/
      //int2lcdyx(av_beep,0,10,0);
 	//int2lcdyx(tst_state[0],0,14,0);
      //int2lcdyx(St_[0],0,12,0);
-	//int2lcdyx(St_[1],0,18,0);
+	int2lcdyx(u_necc,0,4,0);
     	} 
      
 
@@ -1517,7 +1537,7 @@ else if (ind==iBat_li)
 					ptrs[sub_ind+1],ptrs[sub_ind+2]);
 	     
 	     int2lcd(sub_ind1+1,'@',0);
-	     int2lcd(lakb[sub_ind1]._tot_bat_volt,'$',1);
+	     int2lcd(lakb[sub_ind1]._tot_bat_volt/10,'$',1);
 		if(lakb[sub_ind1]._ch_curr>0)
 			{
 			int2lcd_mmm(lakb[sub_ind1]._ch_curr,'#',2);
@@ -2504,7 +2524,7 @@ else if(ind==iSet)
 	ptrs[9]=" T проверки   цепи  ";
      ptrs[10]=" батареи     qмин.  ";
      ptrs[11]=" Umax=       !В     ";
-     ptrs[12]=" Uб0°=       @В     ";
+     ptrs[12]=" Uбатmax =   @В     ";
      ptrs[13]=" Uб20°=      #В     ";
      ptrs[14]=" Uсигн=      ^В     ";
      ptrs[15]=" Umin.сети=  &В     ";
@@ -2546,7 +2566,7 @@ else if(ind==iSet)
 	     	}
 	     else sub_bgnd("выкл.",'y',-4);
 	     int2lcd(UMAX,'!',1);
-	     int2lcd(UB0,'@',1);
+	     int2lcd(UBMAX,'@',1);
 	     int2lcd(UB20,'#',1);
 	     int2lcd(USIGN,'^',1);
 	     int2lcd(UMN,'&',0);
@@ -3380,6 +3400,25 @@ else if(ind==iK_bat)
      //if((sub_ind==1)&&(phase==0))MSG_IND2OUT_EN_RELSAM=1;
 	}  	
 
+else if(ind==iK_bat_li)
+	{
+	//static char ind_cnt;
+	ptrs[0]=" Uбат =     @В      ";
+	ptrs[1]=" откалибруйте Uбат  ";
+	ptrs[2]="  нажатием љ или њ  ";
+	ptrs[3]=sm_exit;
+	ptrs[4]=sm_;
+	ptrs[5]=sm_;
+     
+ 	if((sub_ind==0)||(sub_ind==1)||(sub_ind==2))index_set=0;
+	else if((sub_ind==3)||(sub_ind==4)||(sub_ind==5))index_set=3;
+
+	bgnd_par(" КАЛИБРОВКА БАТАРЕИ ",ptrs[index_set],ptrs[index_set+1],ptrs[index_set+2]);
+
+	pointer_set(1);	
+	int2lcd(Ubat_dac,'@',1);
+	}  	
+
 else if(ind==iK_src)
 	{
 	//if((phase==1)&&(Ibat>-10)&&(Ibat<10))phase=2;
@@ -3985,7 +4024,24 @@ else if(ind==iPdp1)
              ,"  Введение батареи  "
              ,"     сотрет все     "
              ,"  предыдущие данные ");	
-     }  
+     } 
+	
+else if(ind==iBatSetupQuest)
+	{
+	ptrs[0]=				" Определена литиевая";
+	ptrs[1]=				"       батарея!     ";
+	ptrs[2]=				"Выполнить настройку?";
+	ptrs[3]=				" < - НЕТ    > - ДА  ";
+
+	bgnd_par(				ptrs[0],
+						ptrs[1],
+						ptrs[2],
+						ptrs[3]);
+						
+	int2lcdyx(ret_duty,0,5,0);
+
+	}	
+	 
 //int2lcdyx(ptr_ind,0,0,0);
 
 if((bFL2)&&(fl_simv_len))
@@ -4108,20 +4164,16 @@ else if(ind==iMn)
 	if(but==butD)
 		{
 		sub_ind++;
-		gran_char(&sub_ind,0,11);
-		//suz_temp=1;
-		//snmp_trap_send("ABCDEFGHIJKLMN",15,0,0);
-		//snmp_trap_send("Main power is on",2,2,2);
-		//reload_hndl();
+		gran_char(&sub_ind,0,10+NUMLBAT);
 		}
 	else if(but==butU)
 		{
 		sub_ind--;
-		gran_char(&sub_ind,0,11);
+		gran_char(&sub_ind,0,10+NUMLBAT);
 		}	
 	else if(but==butE_)
 		{
-		avar_bat_as_hndl();
+		//avar_bat_as_hndl();
 		}
 	else if(but==butL)
 		{
@@ -4136,15 +4188,22 @@ else if(ind==iMn)
 		     ret(1000);
 		     }
 		}
-     else if(sub_ind==2)
-		{
+	else if((sub_ind>0)&&(sub_ind<=NUMLBAT))
+	    	{
 		if(but==butE)
 		     {
+	    		tree_up(iBat_li,0,0,lakb_ison_mass[sub_ind]);
+			}
+		}
+
+     else if(sub_ind==(1+NUMLBAT))
+		{
+		    	{
 		     tree_up(iSrc,0,0,0);
 		     ret(1000);
 		     }
 		}
-     else if(sub_ind==3)
+     else if(sub_ind==(2+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -4153,7 +4212,7 @@ else if(ind==iMn)
 		     }
 		}		
 
-     else if(sub_ind==4)
+     else if(sub_ind==(3+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -4162,7 +4221,7 @@ else if(ind==iMn)
 		     }
 		}		
 
-     else if(sub_ind==5)
+     else if(sub_ind==(4+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -4171,7 +4230,7 @@ else if(ind==iMn)
 		     }
 		}	
 
-     else if(sub_ind==6)
+     else if(sub_ind==(5+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -4180,7 +4239,7 @@ else if(ind==iMn)
 		     }
 		}	
 
-     else if(sub_ind==7)
+     else if(sub_ind==(6+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -4189,7 +4248,7 @@ else if(ind==iMn)
 		     }
 		}	
 
-     else if(sub_ind==8)
+     else if(sub_ind==(7+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -4198,16 +4257,8 @@ else if(ind==iMn)
 			}
 		}	
 
- /*   	else if(sub_ind==9)
-		{
-		if(but==butE)
-		     {
-			tree_up(iAusw,0,0,0);
-		     ret(1000);
-			}
-		}*/	
 
-     else if(sub_ind==9)
+     else if(sub_ind==(8+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -4215,8 +4266,9 @@ else if(ind==iMn)
 		     ret(50);
 		     parol_init();
 			}
-		}	
-     else if(sub_ind==10)
+		}
+			
+     else if(sub_ind==(9+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -4224,7 +4276,7 @@ else if(ind==iMn)
 			St_[1]&=0xe3;
 			}
 		}		
-     else if(sub_ind==11)
+     else if(sub_ind==(10+NUMLBAT))
 		{
 		if(but==butE)
 		     {
@@ -5212,12 +5264,12 @@ else if(ind==iSet)
 	     
 	else if(sub_ind==12)
 	     {
-	     if(but==butR)UB0++;
-	     else if(but==butR_)UB0+=10;
-	     else if(but==butL)UB0--;
-	     else if(but==butL_)UB0-=10;
-	     gran(&UB0,10,1000);
-	     lc640_write_int(EE_UB0,UB0);
+	     if(but==butR)UBMAX++;
+	     else if(but==butR_)UBMAX+=10;
+	     else if(but==butL)UBMAX--;
+	     else if(but==butL_)UBMAX-=10;
+	     gran(&UBMAX,10,1000);
+	     lc640_write_int(EE_UBMAX,UBMAX);
 	     speed=1;
 	     }
 	     
@@ -7590,6 +7642,54 @@ else if(ind==iK_bat)
 			}
 		}			
 	}
+
+else if(ind==iK_bat_li)
+	{
+	static char si_max;
+
+ 	si_max=3;
+	
+	ret(1000);
+	if(but==butD)
+		{
+		sub_ind++;
+		if((sub_ind==1)||(sub_ind==2))sub_ind=3;
+		gran_char(&sub_ind,0,si_max);
+		phase=0;
+		}
+	else if(but==butU)
+		{
+		sub_ind--;
+		if((sub_ind==1)||(sub_ind==2))sub_ind=0;
+		gran_char(&sub_ind,0,si_max);
+		phase=0;
+		}
+	else if(but==butD_)
+		{
+		sub_ind=si_max;
+		}			
+	else if(sub_ind==0)
+		{
+		temp_SS=lc640_read_int(ptr_ku_bat);
+	     if(but==butR) temp_SS++;
+	     else if(but==butR_)	temp_SS+=50;
+	     else if(but==butL) temp_SS--;
+	     else if(but==butL_)	temp_SS-=50;
+		gran(&temp_SS,1300,1600);
+		lc640_write_int(ptr_ku_bat,temp_SS);					
+		speed=1;			
+		}
+					
+									
+	else if(sub_ind==si_max)
+		{
+		if(but==butE)
+			{
+			tree_down(0,1);
+			ret(0);
+			}
+		}			
+	}
 	
 else if(ind==iK_src)
 	{
@@ -8337,7 +8437,22 @@ else if(ind==iJ_bat_wrk)
 		tree_down(0,0);
 		ret_ind(0,0,0);
 		}	
-	}			   
+	}
+	
+else if(ind==iBatSetupQuest)
+	{
+	if(but==butL)
+		{
+		tree_down(0,0);
+		ret(0);
+		}
+	else if(but==butR)
+		{
+		bLAKB_KONF_CH_EN=1;
+		tree_down(0,0);
+		ret(0);
+		}
+	}				   
 but_an_end:
 n_but=0;
 
@@ -8430,6 +8545,86 @@ LPC_GPIO1->FIODIR&=~(1UL<<BUT0)&~(1UL<<BUT1)&~(1UL<<BUT2)&~(1UL<<BUT3)&~(1UL<<BU
 	   
 }
 
+
+//-----------------------------------------------
+void lakb_konf_ch_hndl_init(void)
+{
+char i;
+for(i=0;i<7;i++)
+	{
+	if(LBAT_STRUKT&(0x0001<<i))
+		{
+		lakb[i]._battIsOn=1;
+		lakb[i]._isOnCnt=50;
+		}
+	else 
+		{
+		lakb[i]._battIsOn=0;
+		lakb[i]._isOnCnt=0;
+		}
+	}
+}
+
+//-----------------------------------------------
+void lakb_konf_setup(void)
+{
+char i;
+
+lc640_write_int(EE_LBAT_CONF_CH_COUNTER,lc640_read_int(EE_LBAT_CONF_CH_COUNTER)+1); //обновляем счетчик сетапов
+
+for(i=0;i<7;i++)
+	{
+	if(lakb[i]._rat_cap==0) 
+		{
+		lakb[i]._battIsOn=0;	 //глядя на емкость задаем новый статус каждого батарейного отсека
+		LBAT_STRUKT&=~(0x0001<<i);//и создаем переменную флагов наличия батарейных отсеков
+		}
+	else 
+		{
+		lakb[i]._battIsOn=1;
+		LBAT_STRUKT|=(0x0001<<i);
+		}
+    
+	} 
+lc640_write_int(EE_LBAT_STRUKT,LBAT_STRUKT); //сохраняем в ЕЕ переменную флагов наличия батарейных отсеков
+}
+
+//-----------------------------------------------
+void lakb_konf_ch_hndl(void)
+{
+char i,temp;
+if((bLAKB_KONF_CH==1)&&(bLAKB_KONF_CH_old==0))
+	{
+	tree_up(iBatSetupQuest,0,0,0);
+	ret(1000);
+	}
+	
+if(bLAKB_KONF_CH_EN==1) //Если пришло разрешение от оператора на обновление
+	{				
+	lakb_konf_setup();
+
+	}
+
+temp=0;
+for(i=0;i<7;i++)
+	{
+	lakb_ison_mass[i]=0;
+	if(lakb[i]._battIsOn)
+		{
+		lakb_ison_mass[temp]=i;
+		temp++;
+		}
+	}
+					    
+NUMLBAT=temp;
+
+
+
+
+bLAKB_KONF_CH=0;
+bLAKB_KONF_CH_EN=0;
+
+}
 
 
 //***********************************************
@@ -8645,6 +8840,7 @@ FullCAN_SetFilter(1,0x18e);
 
 bRESET_RESET=0;
 reload_hndl();
+lakb_konf_ch_hndl_init();
 
 while (1) 
 	{
@@ -8722,6 +8918,7 @@ while (1)
 		snmp_data();
 		fuse_drv();
 		ext_drv();
+		lakb_konf_ch_hndl();
 		}
 
 	if(b2Hz)

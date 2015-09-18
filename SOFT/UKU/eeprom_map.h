@@ -23,8 +23,8 @@
 
 #define EE_MAIN_BPS SECTOR_KOEF+100
 #define EE_UMAX    	EE_MAIN_BPS+2
-#define EE_UB0    	EE_UMAX+2
-#define EE_UB20    	EE_UB0+2
+#define EE_UBMAX   	EE_UMAX+2
+#define EE_UB20    	EE_UBMAX+2
 #define EE_TMAX	EE_UB20+2
 #define EE_AV_OFF_AVT    EE_TMAX+2
 #define EE_USIGN	EE_AV_OFF_AVT+2
@@ -64,6 +64,8 @@
 #define EE_IU2		EE_IU1+2
 #define EE_IU3		EE_IU2+2
 #define EE_IU4		EE_IU3+2
+#define EE_LBAT_STRUKT		EE_IU4+2
+#define EE_LBAT_CONF_CH_COUNTER	EE_LBAT_STRUKT+2
 
 #define SECTOR_AUSW  		SECTOR_KOEF+200
 #define EE_AUSW_MAIN 		SECTOR_AUSW
