@@ -1421,7 +1421,7 @@ int2lcdyx(index_set,0,1,0);*/
      //int2lcdyx(av_rele,0,4,0);
      //int2lcdyx(av_beep,0,10,0);
 	//int2lcdyx(tst_state[0],0,14,0);
-     //int2lcdyx(St_[0],0,12,0);
+     int2lcdyx(lc640_read_int(EE_LBAT_CONF_CH_COUNTER),0,19,0);
 	int2lcdyx(u_necc,0,4,0);
     	} 
      
@@ -3318,6 +3318,7 @@ else if(ind==iK)
 	pointer_set(1);	 
 	}    
 
+
 else if(ind==iK_bat)
 	{
 	//static char ind_cnt;
@@ -3414,9 +3415,13 @@ else if(ind==iK_bat_li)
 	else if((sub_ind==3)||(sub_ind==4)||(sub_ind==5))index_set=3;
 
 	bgnd_par("  ¿À»¡–Œ¬ ¿ ¡¿“¿–≈» ",ptrs[index_set],ptrs[index_set+1],ptrs[index_set+2]);
+	MSG_IND2OUT_DIS_SRC1=1;
+     MSG_IND2OUT_DIS_SRC2=1;
 
 	pointer_set(1);	
 	int2lcd(Ubat_dac,'@',1);
+	//int2lcdyx(adc_buff_[17],0,3,0);
+	//int2lcdyx(Kubat,0,7,0);
 	}  	
 
 else if(ind==iK_src)
@@ -7487,7 +7492,7 @@ else if(ind==iK)
 			}
 		else if(sub_ind==1)
 			{
-			tree_up(iK_bat,0,0,0);	
+			tree_up(iK_bat_li,0,0,0);	
 			ret(1000);
 			}
 		else if(sub_ind==2)
@@ -8782,6 +8787,10 @@ tst_state[6]=tstWRK;
 tst_state[7]=tstWRK;
 tst_state[8]=tstWRK;
 tst_state[9]=tstWRK;
+
+
+memo_read();
+
 
 #ifdef LAN_OFF
 if(lc640_read_int(EE_ETH_IS_ON)==1) lc640_write_int(EE_ETH_IS_ON,0);

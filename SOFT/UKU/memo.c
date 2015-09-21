@@ -77,6 +77,7 @@ VZ_HR=lc640_read_int(EE_VZ_HR);
 TBAT=lc640_read_int(EE_TBAT);
 NUMDT=lc640_read_int(EE_NUMDT);
 NUMSK=lc640_read_int(EE_NUMSK);
+LBAT_STRUKT=lc640_read_int(EE_LBAT_STRUKT);
 
 ETH_IS_ON=lc640_read_int(EE_ETH_IS_ON);
 ETH_DHCP_ON=lc640_read_int(EE_ETH_DHCP_ON);
