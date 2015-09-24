@@ -853,6 +853,9 @@ void rs232_transmit_of_sk(char in1,char in2)
 void bat_drv(void)
 {
 
+
+
+/*
 if((Ubat<200)&&(main_cnt>5)&&(NUMBAT))
 	{ 
 	if(cnt_ubat<AV_UBAT_ON)
@@ -877,108 +880,40 @@ else if(Ubat>200)
 		}
 	else if(cnt_ubat>AV_UBAT_ON) cnt_ubat=0;	
 	}
-	 
+*/	 
 
-if(abs(Ibat)>IKB)
-	{ 
-	if(cnt_ibat<AV_IBAT_ON)
-		{
-		cnt_ibat++;
-		if(cnt_ibat>=AV_IBAT_ON)
-			{
-			avar_bat_hndl(0);
-			}
-		}
-	else if(cnt_ibat<AV_IBAT_ON)cnt_ibat=0;	
+
+if(lakb_damp[0][41]>=90)
+	{
+	bRS485ERR=1;
 	}
-else cnt_ibat=0;	  	  
-
-
-if((Ubat<=(USIGN))&&(Ubat>100)&&(NUMBAT))
+if(lakb_damp[0][34]==0)
 	{
-     bUrazr=1;
-     }
-else 
-	{
-	bUrazr=0;
-	bUOFF=0;
-	}     
-
-
-
-if((bit_minus)&&(Ibat>(IKB*10)))
-	{         
-	if(cnt_irazr<50)
-		{
-		cnt_irazr++;
-	
-		}       			
+	//if(bRS485ERR)bLAKB_KONF_CH=1;
+	bRS485ERR=0;
 	}
-else 
+
+if(lakb_can_cnt>=50)
 	{
-	if(cnt_irazr>5) cnt_irazr-=5;
-	else if(cnt_irazr) cnt_irazr--;
-	}	
-if(cnt_irazr>48) bIrazr=1;        
-else if(cnt_irazr<=5)
-	{
-	bIrazr=0;
-	bIOFF=0;
-	} 
-	
-if(UBM_AV)
-	{
-	signed short ubat_avg;
-	signed short ubat_avg_up;
-	signed short ubat_avg_down;
-	signed long temp_SL;
-	static signed short	ubm_av_cnt;
-
-	char bAV;
-
-	ubat_avg=Ubat/5;
-	if((AUSW_MAIN/100)==48)
-		{
-		ubat_avg=Ubat/4;
-		}
-
-	temp_SL=(signed long)ubat_avg;
-    	temp_SL*=(100L + ((signed long)UBM_AV));
-	temp_SL/=100L;
-	ubat_avg_up=(signed short)temp_SL;
-
-	temp_SL=(signed long)ubat_avg;
-    	temp_SL*=(100L - ((signed long)UBM_AV));
-	temp_SL/=100L;
-	ubat_avg_down=(signed short)temp_SL;
-
-	bAV=0;
-
-	if ((Ubat_e[0]>ubat_avg_up) || (Ubat_e[0]<ubat_avg_down)) bAV=1;
-	if ((Ubat_e[1]>ubat_avg_up) || (Ubat_e[1]<ubat_avg_down)) bAV=1;
-	if ((Ubat_e[2]>ubat_avg_up) || (Ubat_e[2]<ubat_avg_down)) bAV=1;
-	if ((Ubat_e[3]>ubat_avg_up) || (Ubat_e[3]<ubat_avg_down)) bAV=1;
-	if((AUSW_MAIN/100)!=48)
-		{
-		if((Ubat_e[4]>ubat_avg_up) || (Ubat_e[4]<ubat_avg_down)) bAV=1;
-		}
-
-	if((bAV)&&(!(LPC_GPIO0->FIOPIN&(1UL<<22))))
-		{
-		if(ubm_av_cnt<50)
-			{
-			ubm_av_cnt++;
-			if(ubm_av_cnt>=50)
-				{
-				if(!(St&0x80))avar_bat_as_hndl();
-				}
-			}
-		}
-	else 
-		{
-		ubm_av_cnt=0;
-		}
+	bCANERR=1;
 	}
+if(lakb_can_cnt==0)
+	{
+	bCANERR=0;
+	}
+
+if(bRS485ERR || bCANERR)
+	{
+	bLIBATERR=1;
+	if(bLIBATERRold==0)avar_bat_hndl(1);
+	}
+else if((!bRS485ERR) && (!bCANERR))
+	{
+	bLIBATERR=0;
+	if(bLIBATERRold==1)avar_bat_hndl(0);
+	}
+bLIBATERRold=bLIBATERR;
+
 	  
 }
 
@@ -1072,11 +1007,11 @@ signed char temp_s;
 
 static char plpl;
 char i;
-
+/*
 temp_SL=(signed long)adc_buff_[17];		 
 temp_SL*=Kubat;							 
 temp_SL/=5000L;
-Ubat_dac=(signed short)temp_SL;
+Ubat_dac=(signed short)temp_SL;*/
 
 
 temp_SL=(signed long)adc_buff_[25];
@@ -1087,21 +1022,21 @@ if(!bI) Ibat=(signed short)temp_SL;
 
 //Ibat=-120;
 
-Ubat_e[0]=Ubat_part[0];
+//Ubat_e[0]=Ubat_part[0];
 
-Ubat_e[1]=Ubat_part[1]-Ubat_part[0];
-if(Ubat_e[1]<0)Ubat_e[1]=0;
+//Ubat_e[1]=Ubat_part[1]-Ubat_part[0];
+//if(Ubat_e[1]<0)Ubat_e[1]=0;
 
-Ubat_e[2]=Ubat_part[2]-Ubat_part[1];
-if(Ubat_e[2]<0)Ubat_e[2]=0;
+//Ubat_e[2]=Ubat_part[2]-Ubat_part[1];
+//if(Ubat_e[2]<0)Ubat_e[2]=0;
 
-if((AUSW_MAIN/100)==48)Ubat_e[3]=Ubat-Ubat_part[2];
-else Ubat_e[3]=Ubat_part[3]-Ubat_part[2];
-if(Ubat_e[3]<0)Ubat_e[3]=0;
+//if((AUSW_MAIN/100)==48)Ubat_e[3]=Ubat-Ubat_part[2];
+//else Ubat_e[3]=Ubat_part[3]-Ubat_part[2];
+//if(Ubat_e[3]<0)Ubat_e[3]=0;
 
-if((AUSW_MAIN/100)==48)Ubat_e[4]=0;
-else Ubat_e[4]=Ubat-Ubat_part[3];
-if(Ubat_e[4]<0)Ubat_e[4]=0;
+//if((AUSW_MAIN/100)==48)Ubat_e[4]=0;
+//else Ubat_e[4]=Ubat-Ubat_part[3];
+//if(Ubat_e[4]<0)Ubat_e[4]=0;
 
 if(Ibat<0)bit_minus=1;
 else bit_minus=0;
@@ -1187,14 +1122,14 @@ temp_SL/=20000L;
 temp_SL-=273L;
 t_i[1]=(signed short)temp_SL;
 
-
+/*
 if((adc_buff_[14]>800)&&(adc_buff_[14]<3800))NDB=0;
 else NDB=0xff;
 temp_SL=(signed long)adc_buff_[14];
 temp_SL*=Ktbat;
 temp_SL/=20000L;
 temp_SL-=273L;
-t_b=(signed short)temp_SL;
+t_b=(signed short)temp_SL;*/
 
 
 if((adc_buff_[13]>800)&&(adc_buff_[13]<3800))ND_out[0]=0;
@@ -1267,7 +1202,7 @@ data_rs[5]=*((char*)&Ubat);
 data_rs[6]=*(((char*)&Ubat)+1);
 data_rs[7]=*((char*)&Ibat);
 data_rs[8]=*(((char*)&Ibat)+1);
-data_rs[9]=t_b;
+//data_rs[9]=t_b;
 
 data_rs[10]=*((char*)&BAT_C_REAL);
 data_rs[11]=*(((char*)&BAT_C_REAL)+1);
@@ -1398,9 +1333,10 @@ temp=(char)t_i[1]&0x7f;
 if (temp<=0) data_rs0[11]=0x80;
 else if(temp>0) data_rs0[11]=0x80+temp;
 
+/*
 temp=(char)t_b&0x7f;
 if (temp<=0) data_rs0[12]=0x80;
-else if(temp>0) data_rs0[12]=0x80+temp;
+else if(temp>0) data_rs0[12]=0x80+temp;*/
 
 data_rs0[13]=(char)(Unet+1);
 
@@ -1456,15 +1392,7 @@ for(i=0;i<7;i++)
 
 	}
 
-if(lakb_damp[0][34]==100)
-	{
-	bRS485ERR=1;
-	}
-if(lakb_damp[0][34]==0)
-	{
-	if(bRS485ERR)bLAKB_KONF_CH=1;
-	bRS485ERR=0;
-	}
+
 
 
 
@@ -1744,7 +1672,7 @@ else
 	temp_L+=UB0;
 	}*/
 
-temp_L=lakb[0]._tot_bat_volt+5;
+temp_L=(lakb[0]._tot_bat_volt/10)+5;
 	
 if(spc_stat==spc_VZ) 
 	{
@@ -1774,7 +1702,7 @@ else if((ind==iTst_BPS12)&&(sub_ind==0))
 	else if(tst_state[7]==tstU)u_necc=UB20;
 	}				
 
-else if(!NUMBAT) u_necc=U0B;	
+//else if(!NUMBAT) u_necc=U0B;	
 else u_necc=u_necc_;		
 
 

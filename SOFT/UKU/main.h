@@ -250,13 +250,13 @@ typedef struct
 enum {iMn,iSrv_sl,iNet,iSet,iBat,iBat_li,iSrc,iS2,iSet_prl,iK_prl,iDnd,iK,
 	iSpcprl,iSpc,k,Crash_0,Crash_1,iKednd,
 	iLoad,iSpc_prl_vz,iSpc_prl_ke,iKe,iVz,iAVAR,iStr,iVrs,iPrltst,iApv,
-	iK_src,iK_bat,iK_load,iK_net,iTst,iTst_klbr,iTst_BPS1,iTst_BPS2,
+	iK_src/*,iK_bat*/,iK_load,iK_net,iTst,iTst_klbr,iTst_BPS1,iTst_BPS2,
 	iTst_BPS12,iDebug,iDef,iSet_st_prl,iK_pdp,iSet_T,iDeb,iJ_bat,
 	iPrl_bat_in_out,iPdp1,iJAv_sel,iJAv_net_sel,iJAv_net,iJAv_src1,
 	iJAv_src2,iJAv_bat,iJAv_bat_sel,iAusw,iAusw_prl,iAusw_set,iK_t_out,
 	iJ_bat_ke_sel,iJ_bat_ke,iJ_bat_vz_sel,iJ_bat_vz,iJ_bat_wrk_sel,iJ_bat_wrk,
 	iExt_set,iExt_dt,iExt_sk,iAvz,iJAv_src1_sel,iJAv_src2_sel,iLog,iLog_,
-	iLan_set,iSet_,iTst_full,iSet_rav,iSet_rav_,iBatSetupQuest,iK_bat_li}i;
+	iLan_set,iSet_,iTst_full,iSet_rav,iSet_rav_,iBatSetupQuest/*,iK_bat_li*/}i;
 
 signed char s_i;
 signed char s_i1;
@@ -442,9 +442,9 @@ extern short main_cnt;
 
 //-----------------------------------------------
 //Состояние батареи
-extern signed short t_b,Ubat,Ibat,Ubat_dac;
-extern signed short Ubat_part[4];			//напряжения промежуточных точек батареи относительно земли
-extern signed short Ubat_e[5];		    	//напряжения банок батареи
+extern signed short tbat,Ubat,Ibat;
+//extern signed short Ubat_part[4];			//напряжения промежуточных точек батареи относительно земли
+//extern signed short Ubat_e[5];		    	//напряжения банок батареи
 extern signed long zar_cnt,zar_cnt_ke;
 extern signed char zar_percent;
 extern char cnt_wrk;
@@ -611,8 +611,10 @@ extern char bLAKB_KONF_CH_old;
 extern char lakb_ison_mass[7];
 extern short lakb_mn_ind_cnt;
 extern char bLAKB_KONF_CH_EN;
-extern char bRS485ERR;
+extern char bRS485ERR,bCANERR;
 extern short LBAT_STRUKT;
+extern short lakb_can_cnt;
+extern char bLIBATERR,bLIBATERRold;
 
 
 

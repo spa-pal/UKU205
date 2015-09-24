@@ -209,7 +209,7 @@ else if((!(St_[1]&0x3c))&&(!St&0x01)&&(!OFFBP2))snmp_bps_stat[1]=1; 		//Работает
 snmp_bat_number=1;
 snmp_bat_voltage=Ubat;
 snmp_bat_current=Ibat;
-snmp_bat_temperature=t_b;
+snmp_bat_temperature=tbat;
 if(BAT_C_REAL==0x5555)
 	{
 	snmp_bat_capacity=BAT_C_NOM*10;

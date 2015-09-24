@@ -20,13 +20,13 @@
 //   <i> This is the name under which embedded host can be
 //   <i> accessed on a local area network.
 //   <i> Default: "mcb2100"
-#define LHOST_NAME     "SPA-UKU202"
+#define LHOST_NAME     "SPA-UKU205"
 
 //   <o>Memory Pool size <1500-32000:4><#/4>
 //   <i> This is the size of a memory pool in bytes. Buffers for
 //   <i> TCPnet packets are allocated from this memory pool.
 //   <i> Default: 8000 bytes
-#define MEM_SIZE       2048
+#define MEM_SIZE       4096
 
 //   <o>Tick Timer interval <10=> 10 ms <20=> 20 ms <25=> 25 ms
 //                          <40=> 40 ms <50=> 50 ms <100=> 100 ms 
@@ -224,7 +224,7 @@
 //   <i> accessed by his name on the local LAN using NBNS protocol.
 //   <i> You need to modify also the number of UDP Sockets,
 //   <i> because NBNS protocol uses one UDP socket to run.
-#define NBNS_ENABLE    0
+#define NBNS_ENABLE    1
 
 //   <e>Dynamic Host Configuration
 //   =============================

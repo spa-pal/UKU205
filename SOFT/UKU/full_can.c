@@ -127,6 +127,9 @@ if(bOUT_FREE2)
      if(ptr_can2_tx_rd>=8)ptr_can2_tx_rd=0;
      bOUT_FREE2=0;	
 	}
+
+lakb_can_cnt++;
+gran(&lakb_can_cnt,0,60);
 }	
 
 //-----------------------------------------------
@@ -932,10 +935,10 @@ if((RXBUFF[1]&0xf8)==PUT_LB_TM1)
 		
 	lakb_damp[temp][0]=RXBUFF[0];
 	mem_copy(&lakb_damp[temp][1],&RXBUFF[2],6);
-	
 	//ccc_plazma[0]++;
 	//ccc_plazma[7]=temp;
-	can_plazma[3]++;
+	//can_plazma[3]++;
+	lakb_can_cnt=0;
 	}	
 
 if((RXBUFF[1]&0xf8)==PUT_LB_TM2)
@@ -947,7 +950,8 @@ if((RXBUFF[1]&0xf8)==PUT_LB_TM2)
 	mem_copy(&lakb_damp[temp][8],&RXBUFF[2],6);
 	//ccc_plazma[1]++;
 	//ccc_plazma[8]=temp;
-	can_plazma[4]++;
+	//can_plazma[4]++;
+	lakb_can_cnt=0;
 	}
 
 if((RXBUFF[1]&0xf8)==PUT_LB_TM3)
@@ -959,45 +963,44 @@ if((RXBUFF[1]&0xf8)==PUT_LB_TM3)
 	mem_copy(&lakb_damp[temp][15],&RXBUFF[2],6);
 	//ccc_plazma[2]++;
 	//ccc_plazma[9]=temp;
-	can_plazma[5]++;
-
+	//can_plazma[5]++;
+	lakb_can_cnt=0;
 	}	
 
 if((RXBUFF[1]&0xf8)==PUT_LB_TM4)
      {
 	char temp;
 	temp=RXBUFF[1]&0x07;
-	
-		
 	lakb_damp[temp][21]=RXBUFF[0];
 	mem_copy(&lakb_damp[temp][22],&RXBUFF[2],6);
 	//ccc_plazma[3]++;
 	//ccc_plazma[10]=temp;
-	can_plazma[6]++;
+	//can_plazma[6]++;
+	lakb_can_cnt=0;
 	}
 
 if((RXBUFF[1]&0xf8)==PUT_LB_TM5)
      {
 	char temp;
 	temp=RXBUFF[1]&0x07;
-		
 	lakb_damp[temp][28]=RXBUFF[0];
 	mem_copy(&lakb_damp[temp][29],&RXBUFF[2],6);
 	//ccc_plazma[4]++;
 	//ccc_plazma[11]=temp;
-	can_plazma[7]++;
+	//can_plazma[7]++;
+	lakb_can_cnt=0;
 	}
 
 if((RXBUFF[1]&0xf8)==PUT_LB_TM6)
      {
 	char temp;
 	temp=RXBUFF[1]&0x07;
-		
 	lakb_damp[temp][35]=RXBUFF[0];
 	mem_copy(&lakb_damp[temp][36],&RXBUFF[2],6);
 	//ccc_plazma[5]++;
 	//ccc_plazma[12]=temp;	
-	can_plazma[8]++;
+	//can_plazma[8]++;
+	lakb_can_cnt=0;
 	}
 
 CAN_IN_AN2_end:
