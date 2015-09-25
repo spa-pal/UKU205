@@ -4,6 +4,7 @@
 #include "control.h"
 #include "cmd.c"
 #include "eeprom_map.h"
+#include "modbus.h"
 
 char bRXIN0;
 char UIB0[100]={0,0,0,0,0,0,0,0,0,0};
@@ -407,6 +408,10 @@ else if ( IIRValue == IIR_RDA )	/* Receive Data Available */
 		{
 	  	UART0Count = 0;		/* buffer overflow */
 	/*	} */
+
+	modbus_rx_buffer[modbus_rx_buffer_ptr]=data;
+	modbus_rx_buffer_ptr++;
+	modbus_timeout_cnt=0;
   	}
 else if ( IIRValue == IIR_CTI )	/* Character timeout indicator */
   	{

@@ -256,7 +256,7 @@ enum {iMn,iSrv_sl,iNet,iSet,iBat,iBat_li,iSrc,iS2,iSet_prl,iK_prl,iDnd,iK,
 	iJAv_src2,iJAv_bat,iJAv_bat_sel,iAusw,iAusw_prl,iAusw_set,iK_t_out,
 	iJ_bat_ke_sel,iJ_bat_ke,iJ_bat_vz_sel,iJ_bat_vz,iJ_bat_wrk_sel,iJ_bat_wrk,
 	iExt_set,iExt_dt,iExt_sk,iAvz,iJAv_src1_sel,iJAv_src2_sel,iLog,iLog_,
-	iLan_set,iSet_,iTst_full,iSet_rav,iSet_rav_,iBatSetupQuest/*,iK_bat_li*/}i;
+	iLan_set,iSet_,iTst_full,iSet_rav,iSet_rav_,iBatSetupQuest,iModbus_set}i;
 
 signed char s_i;
 signed char s_i1;
@@ -417,6 +417,8 @@ extern signed short ETH_GW_1;
 extern signed short ETH_GW_2;
 extern signed short ETH_GW_3;
 extern signed short ETH_GW_4;
+extern signed short MODBUS_ADRESS;
+extern signed short MODBUS_BAUDRATE;
 
 //extern char snmp_community[10];
 
