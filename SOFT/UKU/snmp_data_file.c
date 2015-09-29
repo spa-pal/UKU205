@@ -161,7 +161,7 @@ if(St&0x01)snmp_mains_power_status|=0x01;
 if(St&0x01)snmp_mains_power_alarm=1;
 
 snmp_load_voltage=Uload;
-snmp_load_current=iload;
+snmp_load_current=Iload;
 snmp_numofbps=2;
 
 snmp_numofevents=lc640_read_int(CNT_EVENT_LOG);

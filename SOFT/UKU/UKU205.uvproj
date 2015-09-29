@@ -614,6 +614,11 @@
                 </FileArmAds>
               </FileOption>
             </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -1147,6 +1152,11 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1682,6 +1692,11 @@
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
             </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -2215,6 +2230,11 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2750,6 +2770,11 @@
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
             </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -3283,6 +3308,11 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3818,6 +3848,11 @@
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
             </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -4352,6 +4387,11 @@
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
             </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -4885,6 +4925,11 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
             </File>
           </Files>
         </Group>

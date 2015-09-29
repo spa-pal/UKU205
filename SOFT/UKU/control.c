@@ -57,6 +57,7 @@ char kb_full_ver;
 signed short bat_ver_cnt=150;
 signed short ibat_,ibat__;
 
+
 //-----------------------------------------------
 //Спецфункции
 enum_spc_stat spc_stat=spc_OFF;
@@ -295,7 +296,8 @@ else if((MSG_IND2PWM_SRC1==0x5555)||(MSG_IND2PWM_SRC2==0x5555))
 		{
 		if(((u_necc-Uload)>10)&&(cntrl_stat<1015))cntrl_stat+=50;
 		else	if(cntrl_stat<1020)cntrl_stat++;
-		}		
+		}
+	cntrl_stat=710;			
 	}
 
 else if(spc_stat==spc_KE)
@@ -305,8 +307,9 @@ else if(spc_stat==spc_KE)
 	} 
 
 else 
-	{ 
-     if(((Ibat/10)>IZMAX)&&!bit_minus)
+	{
+	cntrl_stat=720; 
+ /*    if(((Ibat/10)>IZMAX)&&!bit_minus)
      	{
                	
      	if((Ibat/10)>=(2*IZMAX))
@@ -407,8 +410,28 @@ else
                     	}
      			}     			
      		}	
-     	}
+     	}*/
+
+	if((lakb[0]._batCurrStat==6)||(lakb[1]._batCurrStat==6)||(lakb[2]._batCurrStat==6))
+		{
+		cntrl_stat+=10;
+		}
+	else if((lakb[0]._batCurrStat==5)||(lakb[1]._batCurrStat==5)||(lakb[2]._batCurrStat==5))
+		{
+		cntrl_stat+=1;
+		}
+	else if((lakb[0]._batCurrStat==2)||(lakb[1]._batCurrStat==2)||(lakb[2]._batCurrStat==2))
+		{
+		cntrl_stat-=50;
+		}
+	else 
+		{
+		if(Ubat>u_necc)cntrl_stat--;
+		else if(Ubat<u_necc)cntrl_stat++;
+		}
  	old_cntrl_stat=cntrl_stat;
+
+	cntrl_stat=700;
      }		
 
 Ibso=Ibs;
@@ -425,12 +448,12 @@ MSG_IND2PWM_SRC1=0;
 MSG_IND2PWM_SRC2=0;
 
 
-cntrl_stat1++;
-cntrl_stat2++;
+//cntrl_stat1++;
+//cntrl_stat2++;
 
 
-gran(&cntrl_stat1,30,970);
-gran(&cntrl_stat2,30,970);
+gran(&cntrl_stat1,10,1010);
+gran(&cntrl_stat2,10,1010);
 
 }
 
@@ -1013,12 +1036,69 @@ temp_SL*=Kubat;
 temp_SL/=5000L;
 Ubat_dac=(signed short)temp_SL;*/
 
+for(i=0;i<3;i++)
+	{
+	if(lakb[i]._dsch_curr) lakb[i]._Ib=-(lakb[i]._dsch_curr/10);
+	else lakb[i]._Ib=(lakb[i]._ch_curr/10);
 
+	lakb[i]._Ub=lakb[i]._tot_bat_volt/10;
+
+	if(!lakb[i]._battIsOn) lakb[i]._batCurrStat=0;
+	else 
+		{
+		if((lakb[i]._Ib > IKB) && (lakb[i]._Ib < lakb[i]._c_c_l_v/10)) lakb[i]._batCurrStat=1;
+		if(lakb[i]._Ib > lakb[i]._c_c_l_v/10) lakb[i]._batCurrStat=2;  
+		if((lakb[i]._Ib/10 > -IKB) && (lakb[i]._Ib/10 < IKB)) lakb[i]._batCurrStat=33;
+		if((lakb[i]._Ib/10 < -IKB) && (lakb[i]._Ib > -(lakb[i]._rat_cap/100))) lakb[i]._batCurrStat=4;
+		if(lakb[i]._Ib < -(lakb[i]._rat_cap/100)) lakb[i]._batCurrStat=5;
+		}
+	}
+
+
+
+temp_SL=0;
+temp=0;
+
+for(i=0;i<3;i++)
+	{
+	if(lakb[i]._battIsOn)
+		{
+		temp_SL+=(signed long)lakb[i]._Ib;
+		temp++;
+		}
+	} 
+
+Ibat=(signed short)(temp_SL/temp);
+
+temp_SL=0;
+temp=0;
+
+for(i=0;i<3;i++)
+	{
+	if(lakb[i]._battIsOn)
+		{
+		temp_SL+=(signed long)lakb[i]._Ub;
+		temp++;
+		}
+	}
+Ubat=(signed short)(temp_SL/temp);
+
+
+
+
+
+
+
+
+
+
+
+/*
 temp_SL=(signed long)adc_buff_[25];
 temp_SL-=Kibat0;
 temp_SL*=-Kibat1;
 temp_SL/=1000L;
-if(!bI) Ibat=(signed short)temp_SL; 
+if(!bI) Ibat=(signed short)temp_SL; */
 
 //Ibat=-120;
 
@@ -1051,14 +1131,14 @@ if((kb_full_ver)&&(abs(Ibat)>IKB))
 	}
 
 
-
+/*
 for(i=0;i<7;i++)
 	{
 	if(lakb[i]._battIsOn) 
 		{
 		bat[i]._Ub=lakb[i]._tot_bat_volt;
 		}
-	}
+	}*/
 
 
 
@@ -1067,8 +1147,8 @@ if((Ubat>=100)&&(MSG_IND2OUT_DIS_BAT==0)) Uload=Ubat;
 else if (Us[0]>=100) Uload=Us[0];
 else Uload=Us[1];
 
-iload=Is[0]+Is[1]-(Ibat/10);
-if(iload<0) iload=0;
+Iload=Is[0]+Is[1]-Ibat;
+if(Iload<0) Iload=0;
 
 temp_SL=(signed long)adc_buff_[24];
 temp_SL*=Kunet;
@@ -1341,8 +1421,8 @@ else if(temp>0) data_rs0[12]=0x80+temp;*/
 data_rs0[13]=(char)(Unet+1);
 
 //data_rs0[14]=101;
-if(iload>=254)data_rs0[14]=0xff;
-else data_rs0[14]=(char)iload+1;
+if(Iload>=254)data_rs0[14]=0xff;
+else data_rs0[14]=(char)Iload+1;
 
 data_rs0[15]=(char)(((BAT_C_REAL/10)+1)&0x7F);
 
@@ -1659,7 +1739,7 @@ if(bat_ver_cnt)
 //-----------------------------------------------
 void u_necc_hndl(void)
 {
-signed long temp_L;
+signed long temp_SL;
 
 /*
 if(t_b<=0) temp_L=UB0;
@@ -1672,15 +1752,18 @@ else
 	temp_L+=UB0;
 	}*/
 
-temp_L=(lakb[0]._tot_bat_volt/10)+5;
-	
+//temp_SL=(lakb[0]._tot_bat_volt/10)+5;
+
+temp_SL=Ubat+5;	
+
+/*
 if(spc_stat==spc_VZ) 
 	{
 	temp_L*=KVZ;
 	temp_L/=1000;
-	} 
+	}*/ 
 	
-u_necc_=(signed int)temp_L;
+u_necc_=(signed short)temp_SL;
 
 
 if((ind==iTst_BPS1)&&(sub_ind==0))
@@ -1706,22 +1789,22 @@ else if((ind==iTst_BPS12)&&(sub_ind==0))
 else u_necc=u_necc_;		
 
 
-if(lakb[0]._battCommState)
+if(bLIBATERR)
 	{
 	u_necc=U0B;
 	}
 if(u_necc>=UBMAX) u_necc=UBMAX;
 
 
-temp_L=(signed long) u_necc;
-temp_L*=99L;
-temp_L/=100L;
-u_necc_dn=(signed short)temp_L;
+temp_SL=(signed long) u_necc;
+temp_SL*=99L;
+temp_SL/=100L;
+u_necc_dn=(signed short)temp_SL;
 
-temp_L=(signed long) u_necc;
-temp_L*=101L;
-temp_L/=100L;
-u_necc_up=(signed short)temp_L;
+temp_SL=(signed long) u_necc;
+temp_SL*=101L;
+temp_SL/=100L;
+u_necc_up=(signed short)temp_SL;
      
 }
 

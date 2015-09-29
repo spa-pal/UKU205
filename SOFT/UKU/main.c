@@ -261,7 +261,7 @@ char ND[2];
 
 //-----------------------------------------------
 //Состояние нагрузки
-signed short iload,Uload;
+signed short Iload,Uload;
 
 //-----------------------------------------------
 //Состояние внешних датчиков
@@ -592,8 +592,8 @@ if(!mnemo_cnt)
 	draw_ptr(105,34-ptr_cnt3,2,4);
 	
 	graphic_print_text(70,22,"    B",5,Uload,1,4,1);
-	if(iload<100)graphic_print_text(93,5,"   A",4,iload,1,3,1);
-	else graphic_print_text(90,5,"   A",4,iload/10,0,3,1);
+	if(Iload<100)graphic_print_text(93,5,"   A",4,Iload,1,3,1);
+	else graphic_print_text(90,5,"   A",4,Iload/10,0,3,1);
 			
 	ptr_cnt++;
 	if(ptr_cnt>=3)
@@ -1114,6 +1114,17 @@ if(ind==iDeb)
 		int2lcdyx(bLIBATERR,2,19,0);
 		int2lcdyx(bLIBATERRold,2,17,0);
 		int2lcdyx(St,3,19,0);
+		int2lcdyx(Ubat,2,3,1);
+		long2lcdyx_mmm(Ibat,3,3,1);
+		int2lcdyx(Uload,2,8,1);
+		long2lcdyx_mmm(Iload,3,8,1);
+		int2lcdyx(NUMLBAT,0,10,0);
+		
+		int2lcdyx(lakb[0]._batCurrStat,1,10,0);
+		int2lcdyx(lakb[1]._batCurrStat,2,10,0);
+		int2lcdyx(IKB/*lakb[2]._batCurrStat*/,3,10,0);
+
+		
 			
      	// 
      	//int2lcdyx(tout_stat[0],2,1,0);   
@@ -1315,11 +1326,10 @@ else if(ind==iMn)
 	     else if((index_set-sub_ind)==2)lcd_buffer[20]=1;
 	     }	
 	
- 	int2lcd(lakb[0]._tot_bat_volt/10,'l',1);
-	if(lakb[0]._ch_curr) int2lcd_mmm(lakb[0]._ch_curr/10,'@',1);
-	else int2lcd_mmm(-lakb[0]._dsch_curr/10,'@',1);
+ 	int2lcd(lakb[0]._Ub,'l',1);
+	int2lcd_mmm(lakb[0]._Ib,'@',1);
  	int2lcd(Uload,'#',1);
- 	int2lcd(iload,'$',1); 	
+ 	int2lcd(Iload,'$',1); 	
  	
  	int2lcd(LPC_RTC->SEC,'&',0);
  	int2lcd(LPC_RTC->MIN,'^',0);
@@ -1637,7 +1647,7 @@ else if(ind==iLoad)
              ," Выход              ");	
 	lcd_buffer[60]=1;
      int2lcd(Uload,'!',1);
-     int2lcd(iload,'@',1);
+     int2lcd(Iload,'@',1);
        
 	}
 		
@@ -8946,7 +8956,7 @@ while (1)
 		ret_ind_hndl();
 		matemat();
 	    	time_drv();
-		kb_drv();				   
+		//kb_drv();				   
 		zar_superviser_drv();
 	    	u_necc_hndl();
 		out_out();   			//иlok

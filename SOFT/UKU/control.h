@@ -39,6 +39,7 @@ extern char kb_full_ver;
 extern signed short bat_ver_cnt;
 extern signed short ibat_,ibat__;
 
+
 //-----------------------------------------------
 //Спецфункции
 typedef enum {spc_OFF=0,spc_KE=33,spc_VZ=5}enum_spc_stat;
