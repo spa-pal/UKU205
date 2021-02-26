@@ -2389,9 +2389,10 @@ else if(ind==iSet)
      ptrs[26]=" Поэлементный к-ль. ";
      ptrs[27]=" батареи         Q% ";
 	ptrs[28]=" Аварийные реле     ";
-     ptrs[29]=sm_exit; 
-     ptrs[30]=" Калибровки         "; 
-     ptrs[31]=" Тест               ";        
+	ptrs[29]=      " Серийный N        w";
+     ptrs[30]=sm_exit; 
+     ptrs[31]=" Калибровки         "; 
+     ptrs[32]=" Тест               ";        
 	
 	if((sub_ind-index_set)>2)index_set=sub_ind-2;
 	else if(sub_ind<index_set)index_set=sub_ind;
@@ -2434,7 +2435,7 @@ else if(ind==iSet)
           } 
      else sub_bgnd("ВЫКЛ.",'Q',-2);
 	
-	     
+	 long2lcd_mmm(AUSW_MAIN_NUMBER,'w',0);    
 	}
 
 else if (ind==iDef)
@@ -4924,7 +4925,7 @@ else if(ind==iSet)
 		if(sub_ind==26)index_set=25;
 		if(sub_ind==27)sub_ind=28;
 		
-		gran_char(&sub_ind,0,31);
+		gran_char(&sub_ind,0,32);
 		}
 	else if(but==butU)
 		{
@@ -4932,11 +4933,11 @@ else if(ind==iSet)
 		if(sub_ind==7)sub_ind=6;
 		if(sub_ind==10)sub_ind=9;
 		if(sub_ind==27)sub_ind=26;
-		gran_char(&sub_ind,0,31);
+		gran_char(&sub_ind,0,32);
 		}
 	else if(but==butD_)
 		{
-		sub_ind=29;
+		sub_ind=30;
 		}
 		
 	else if(sub_ind==0)
@@ -5216,8 +5217,20 @@ else if(ind==iSet)
 		     ret(1000);
 		     }
 		}
-				
-     else if(sub_ind==29)
+	else if(sub_ind==29)
+	     {
+	     if(but==butR)AUSW_MAIN_NUMBER++;
+	     else if(but==butR_)AUSW_MAIN_NUMBER+=20;
+	     else if(but==butL)AUSW_MAIN_NUMBER--;
+	     else if(but==butL_)AUSW_MAIN_NUMBER-=20;
+		else if(but==butEL_)AUSW_MAIN_NUMBER=15000;
+		if(AUSW_MAIN_NUMBER<22000)AUSW_MAIN_NUMBER=100000;
+		if(AUSW_MAIN_NUMBER>100000)AUSW_MAIN_NUMBER=22000;
+	     lc640_write_int(EE_AUSW_MAIN_NUMBER,(short)(AUSW_MAIN_NUMBER&0x0000ffffUL));
+		lc640_write_int(EE_AUSW_MAIN_NUMBER+2,(short)((AUSW_MAIN_NUMBER&0xffff0000UL)>>16UL));
+	     speed=1;
+	     }  				
+     else if(sub_ind==30)
 		{
 		if(but==butE)
 		     {
@@ -5225,7 +5238,7 @@ else if(ind==iSet)
 		     ret(0);
 		     }
 		}		
-	else if(sub_ind==30)
+	else if(sub_ind==31)
 		{
 		if(but==butE)
 		     {		
@@ -5234,7 +5247,7 @@ else if(ind==iSet)
 			ret(50);
 			}						
 		}			
-	else if(sub_ind==31)
+	else if(sub_ind==32)
 		{
 		if(but==butE)
 		     {
