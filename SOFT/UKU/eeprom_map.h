@@ -34,6 +34,7 @@
 #define EE_KVZ		EE_IKB+2
 #define EE_IMAX	EE_KVZ+2
 #define EE_KIMAX	EE_IMAX+2
+#define EE_IMIN		EE_KIMAX
 #define EE_APV_ON	EE_KIMAX+2
 #define EE_IZMAX	EE_APV_ON+2
 #define EE_U0B		EE_IZMAX+2
@@ -64,6 +65,8 @@
 #define EE_IU2		EE_IU1+2
 #define EE_IU3		EE_IU2+2
 #define EE_IU4		EE_IU3+2
+#define EE_MODBUS_ADRESS		EE_IU4+2
+
 
 #define SECTOR_AUSW  		SECTOR_KOEF+200
 #define EE_AUSW_MAIN 		SECTOR_AUSW
@@ -242,6 +245,17 @@
 #define CNT_EVENT_LOG	PTR_EVENT_LOG+2 
 // колличество событий (не более 64) 
 
+#define	EE_WEB_PASSWORD				4092
+#define EE_HTTP_LOCATION			4100
+#define EE_SNTP_WEB_ENABLE			4200
+#define EE_UMAXN					4202
+#define EE_SNTP_WEB_ENABLE			4204
+#define EE_SNTP_IP1					4206
+#define EE_SNTP_IP2					4208
+#define EE_SNTP_IP3					4210
+#define EE_SNTP_IP4					4212
+#define EE_SNTP_ENABLE				4214
+#define EE_SNTP_GMT					4216
 
 extern const short ptr_kt_src[2];
 extern const short ptr_ku_src[2];

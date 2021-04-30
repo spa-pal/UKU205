@@ -10,6 +10,7 @@
 #include "common_func.h"
 
 char snmp_community[10];
+char snmp_web_passw[4];
 
 //Информация об устройстве
 signed short snmp_device_code;

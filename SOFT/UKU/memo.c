@@ -48,6 +48,7 @@ IKB=lc640_read_int(EE_IKB);
 KVZ=lc640_read_int(EE_KVZ);
 IMAX=lc640_read_int(EE_IMAX);
 KIMAX=lc640_read_int(EE_KIMAX);
+IMIN=lc640_read_int(EE_IMIN);
 APV_ON=lc640_read_int(EE_APV_ON);
 IZMAX=lc640_read_int(EE_IZMAX);
 U0B=lc640_read_int(EE_U0B);	 
@@ -173,6 +174,8 @@ DATE_AVZ=lc640_read_int(EE_DATE_AVZ);
 MONTH_AVZ=lc640_read_int(EE_MONTH_AVZ);
 if(!((MONTH_AVZ>0)&&(MONTH_AVZ<13)))MONTH_AVZ=0;
 YEAR_AVZ=lc640_read_int(EE_YEAR_AVZ); 
+SNTP_ENABLE=lc640_read_int(EE_SNTP_ENABLE);
+SNTP_GMT=lc640_read_int(EE_SNTP_GMT);
 
 for(i=0;i<64;i++)
 	{
@@ -186,6 +189,11 @@ for(i=0;i<30;i++)
 	{
 	snmp_model[i]=lc640_read(EE_MODEL+i);
 	} 
+for(i=0;i<3;i++)
+	{
+	snmp_web_passw[i]=lc640_read(EE_WEB_PASSWORD+(i*2));
+	snmp_web_passw[3]=0;
+	}
 }
 
 

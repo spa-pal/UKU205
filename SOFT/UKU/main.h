@@ -43,7 +43,7 @@
 #define BAUD_RATE0 9600UL
 #define BAUD_RATE1 9600UL
 
-#define HARDVARE_VERSION	 5
+//#define HARDVARE_VERSION	 5
 
 #define AVAR_UNET_ON 	5
 #define AV_UMAX_ON 		100
@@ -234,7 +234,8 @@ enum {iMn,iSrv_sl,iNet,iSet,iBat,iSrc,iS2,iSet_prl,iK_prl,iDnd,iK,
 	iJAv_src2,iJAv_bat,iJAv_bat_sel,iAusw,iAusw_prl,iAusw_set,iK_t_out,
 	iJ_bat_ke_sel,iJ_bat_ke,iJ_bat_vz_sel,iJ_bat_vz,iJ_bat_wrk_sel,iJ_bat_wrk,
 	iExt_set,iExt_dt,iExt_sk,iAvz,iJAv_src1_sel,iJAv_src2_sel,iLog,iLog_,
-	iLan_set,iSet_,iTst_full,iSet_rav,iSet_rav_}i;
+	iLan_set,iSet_,iTst_full,iSet_rav,iSet_rav_,
+	iFWabout,iSet_T_avt}i;
 
 signed char s_i;
 signed char s_i1;
@@ -292,11 +293,13 @@ extern signed short TMAX;
 extern signed short AV_OFF_AVT;
 extern signed short USIGN;
 extern signed short UMN;
+extern signed short UMAXN;
 extern signed short ZV_ON;
 extern signed short IKB;
 extern signed short KVZ;
 extern signed short IMAX;
 extern signed short KIMAX;
+extern signed short IMIN;
 extern signed short APV_ON;
 extern signed short IZMAX;
 extern signed short U0B;
@@ -411,7 +414,10 @@ typedef enum {mnON=0x55,mnOFF=0xAA}enum_MNEMO_ON;
 extern enum_MNEMO_ON MNEMO_ON;
 extern unsigned short MNEMO_TIME;
 
+extern signed short SNTP_ENABLE;
+extern signed short SNTP_GMT;
 
+extern signed short MODBUS_ADRESS;
 //-----------------------------------------------
 //Состояние системы
 extern char St;
@@ -502,6 +508,14 @@ extern unsigned short hour_cnt_5hz,hour_cnt_1hz;
 extern char cnt_ind;
 
 //-----------------------------------------------
+//WEB-интерфейс
+extern char uku_set_autorized;
+extern long web_param_input;
+extern char place_holder[70];
+extern short web_cnt_main;
+extern short web_cnt_2hz;
+
+//-----------------------------------------------
 //Отладка
 extern unsigned short rotor_can[6];
 extern unsigned short cnt_sec;
@@ -509,6 +523,7 @@ extern char plazma_suzun;
 extern char uart_plazma;
 extern char plazma_can,plazma_can1,plazma_can2,plazma_can3,plazma_can4;
 extern short snmp_plazma;
+extern char web_plazma[5];
 
 //-----------------------------------------------
 //Имя устройства

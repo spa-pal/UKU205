@@ -12,13 +12,13 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>LPC1766</Device>
+          <Device>LPC1768</Device>
           <Vendor>NXP (founded by Philips)</Vendor>
-          <Cpu>IRAM(0x10000000-0x10007FFF) IRAM2(0x20000000-0x20007FFF) IROM(0-0x3FFFF) CLOCK(12000000) CPUTYPE("Cortex-M3")</Cpu>
+          <Cpu>IRAM(0x10000000-0x10007FFF) IRAM2(0x2007C000-0x20083FFF) IROM(0-0x7FFFF) CLOCK(12000000) CPUTYPE("Cortex-M3")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"STARTUP\NXP\startup_LPC17xx.s" ("NXP LPC17xx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O463 -S0 -C0 -FO7 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_256 -FS00 -FL040000)</FlashDriverDll>
-          <DeviceId>4629</DeviceId>
+          <StartupFile>"STARTUP\NXP\LPC17xx\startup_LPC17xx.s" ("NXP LPC17xx Startup Code")</StartupFile>
+          <FlashDriverDll>UL2CM3(-O463 -S0 -C0 -FO7 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_512 -FS00 -FL080000)</FlashDriverDll>
+          <DeviceId>4868</DeviceId>
           <RegisterFile>LPC17xx.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -34,8 +34,8 @@
           <BinPath></BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath>яNXP\</RegisterFilePath>
-          <DBRegisterFilePath>яNXP\</DBRegisterFilePath>
+          <RegisterFilePath>NXP\LPC17xx\</RegisterFilePath>
+          <DBRegisterFilePath>NXP\LPC17xx\</DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -63,9 +63,9 @@
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>python curr_version.py</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -100,11 +100,11 @@
           <SimDllName>SARMCM3.DLL</SimDllName>
           <SimDllArguments>-MPU</SimDllArguments>
           <SimDlgDll>DARMP1.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pLPC1766</SimDlgDllArguments>
+          <SimDlgDllArguments>-pLPC1768</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
           <TargetDllArguments>-MPU</TargetDllArguments>
           <TargetDlgDll>TARMP1.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pLPC1766</TargetDlgDllArguments>
+          <TargetDlgDllArguments>-pLPC1768</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -163,7 +163,7 @@
             <DriverSelection>4096</DriverSelection>
           </Flash1>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"FM.EXE" (DEVICE($D,$X,0) ERASE(DEVICE,PROTECTISP) HEXFILE(#H,NOCHECKSUMS,NOFILL,PROTECTISP) COM(1,9600) HARDWARE(BOOTEXEC,100,50))</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
@@ -269,7 +269,7 @@
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x80000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -294,7 +294,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x80000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -471,6 +471,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -612,6 +622,59 @@
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>2</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument>C:\Keil\ARM\bin\fcarm @@Web\Web.inp</CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                </CommonProperty>
+                <FileArmAds/>
               </FileOption>
             </File>
           </Files>
@@ -1083,6 +1146,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1147,6 +1220,41 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1617,6 +1725,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1681,6 +1799,41 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
             </File>
           </Files>
         </Group>
@@ -2151,6 +2304,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2215,6 +2378,41 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
             </File>
           </Files>
         </Group>
@@ -2685,6 +2883,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2749,6 +2957,41 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
             </File>
           </Files>
         </Group>
@@ -3219,6 +3462,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3283,6 +3536,41 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
             </File>
           </Files>
         </Group>
@@ -3753,6 +4041,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3817,6 +4115,41 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
             </File>
           </Files>
         </Group>
@@ -4287,6 +4620,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4351,6 +4694,41 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
             </File>
           </Files>
         </Group>
@@ -4821,6 +5199,16 @@
               <FileType>1</FileType>
               <FilePath>.\memo.c</FilePath>
             </File>
+            <File>
+              <FileName>curr_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\curr_version.c</FilePath>
+            </File>
+            <File>
+              <FileName>HTTP_CGI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HTTP_CGI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4885,6 +5273,41 @@
               <FileName>Web.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Web\Web.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Connecting</GroupName>
+          <Files>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>http_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\http_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>MODBUS_TCP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MODBUS_TCP.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HTTP</GroupName>
+          <Files>
+            <File>
+              <FileName>web.inp</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\Web\web.inp</FilePath>
             </File>
           </Files>
         </Group>

@@ -26,14 +26,14 @@
 //   <i> This is the size of a memory pool in bytes. Buffers for
 //   <i> TCPnet packets are allocated from this memory pool.
 //   <i> Default: 8000 bytes
-#define MEM_SIZE       2048
+#define MEM_SIZE       4096
 
 //   <o>Tick Timer interval <10=> 10 ms <20=> 20 ms <25=> 25 ms
 //                          <40=> 40 ms <50=> 50 ms <100=> 100 ms 
 //                          <200=> 200 ms
 //   <i> System Tick Timer interval for software timers
 //   <i> Default: 100 ms
-#define TICK_INTERVAL  10
+#define TICK_INTERVAL  100
 
 // </h>
 // <e>Ethernet Network Interface
@@ -544,7 +544,7 @@
 //   <i> Default TCP Socket Keep Alive timeout. When it expires
 //   <i> with no TCP data frame send, TCP Connection is closed.
 //   <i> Default: 120
-#define TCP_DEFTOUT    120
+#define TCP_DEFTOUT    20
 
 /* TCP fixed timeouts */
 #define TCP_INIT_RETRY_TOUT 1     /* TCP initial Retransmit period in sec.   */
