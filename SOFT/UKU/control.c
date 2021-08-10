@@ -705,10 +705,10 @@ for (i=0;i<1;i++)
 				tout_stat[i]=tMAX;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,1,tout[i]);
 					{
-					if(i==0)snmp_trap_send("DT #1 is on",2,2,2);
-					if(i==1)snmp_trap_send("DT #2 is on",2,2,2);
-					if(i==2)snmp_trap_send("DT #3 is on",2,2,2);
-					if(i==3)snmp_trap_send("DT #4 is on",2,2,2);
+					if(i==0)snmp_trap_send("Alarm, temperature of sensor #1 is above the threshold",2,2,2);
+					if(i==1)snmp_trap_send("Alarm, temperature of sensor #2 is above the threshold",2,2,2);
+					if(i==2)snmp_trap_send("Alarm, temperature of sensor #3 is above the threshold",2,2,2);
+					if(i==3)snmp_trap_send("Alarm, temperature of sensor #4 is above the threshold",2,2,2);
 					}
 				if(!T_EXT_REL_EN[i])av_rele|=(1<<(8+i));
 				if(!T_EXT_ZVUK_EN[i])av_beep|=(1<<(8+i));
@@ -726,10 +726,10 @@ for (i=0;i<1;i++)
 				tout_stat[i]=tNORM;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,0,tout[i]);
 					{
-					if(i==0)snmp_trap_send("DT #1 is off",2,2,2);
-					if(i==1)snmp_trap_send("DT #2 is off",2,2,2);
-					if(i==2)snmp_trap_send("DT #3 is off",2,2,2);
-					if(i==3)snmp_trap_send("DT #4 is off",2,2,2);
+					if(i==0)snmp_trap_send("Temperature of sensor #1 is normal",2,2,2);
+					if(i==1)snmp_trap_send("Temperature of sensor #2 is normal",2,2,2);
+					if(i==2)snmp_trap_send("Temperature of sensor #3 is normal",2,2,2);
+					if(i==3)snmp_trap_send("Temperature of sensor #4 is normal",2,2,2);
 					}
 				if(AV_OFF_AVT)
 					{
@@ -751,6 +751,10 @@ for (i=0;i<1;i++)
 				tout_stat[i]=tMIN;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,2,tout[i]);
 					{
+					if(i==0)snmp_trap_send("Alarm, temperature of sensor #1 is below the threshold",2,2,2);
+					if(i==1)snmp_trap_send("Alarm, temperature of sensor #2 is below the threshold",2,2,2);
+					if(i==2)snmp_trap_send("Alarm, temperature of sensor #3 is below the threshold",2,2,2);
+					if(i==3)snmp_trap_send("Alarm, temperature of sensor #4 is below the threshold",2,2,2);
 					}
 				if(!T_EXT_REL_EN[i])av_rele|=(1<<(8+i));
 				if(!T_EXT_ZVUK_EN[i])av_beep|=(1<<(8+i));
@@ -768,6 +772,11 @@ for (i=0;i<1;i++)
 				tout_stat[i]=tNORM;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,0,tout[i]);
 					{
+					if(i==0)snmp_trap_send("Temperature of sensor #1 is normal",2,2,2);
+					if(i==1)snmp_trap_send("Temperature of sensor #2 is normal",2,2,2);
+					if(i==2)snmp_trap_send("Temperature of sensor #3 is normal",2,2,2);
+					if(i==3)snmp_trap_send("Temperature of sensor #4 is normal",2,2,2);
+
 					}
 				if(AV_OFF_AVT)
 					{
@@ -852,6 +861,7 @@ void rs232_transmit_of_sk(char in1,char in2)
 //-----------------------------------------------
 void bat_drv(void)
 {
+char i;
 
 if((Ubat<200)&&(main_cnt>5)&&(NUMBAT))
 	{ 
@@ -933,25 +943,58 @@ if(UBM_AV)
 	signed short ubat_avg_down;
 	signed long temp_SL;
 	static signed short	ubm_av_cnt;
+	char bat_cell_number;
 
 	char bAV;
 
-	ubat_avg=Ubat/5;
+/*	Ubat=600;
+	Ubat_e[0]=100;
+	Ubat_e[1]=80;
+	Ubat_e[2]=120;
+	Ubat_e[3]=140;
+	Ubat_e[4]=200; */
+
+	bat_cell_number=5;
 	if((AUSW_MAIN/100)==48)
 		{
-		ubat_avg=Ubat/4;
+		bat_cell_number=4;
+		}
+	if((AUSW_MAIN/100)==24)
+		{
+		bat_cell_number=2;
+		}
+	ubat_avg=Ubat/(short)bat_cell_number;
+
+	for(i=0;i<5;i++)
+		{
+		temp_SL=(signed long)Ubat_e[i];		
+		temp_SL*=100;
+		temp_SL/=ubat_avg;
+		temp_SL-=100;
+		Ubat_e_imbalance[i]=(short)temp_SL;
+		if(i>=bat_cell_number)Ubat_e_imbalance[i]=0;
 		}
 
-	temp_SL=(signed long)ubat_avg;
-    	temp_SL*=(100L + ((signed long)UBM_AV));
-	temp_SL/=100L;
-	ubat_avg_up=(signed short)temp_SL;
 
-	temp_SL=(signed long)ubat_avg;
-    	temp_SL*=(100L - ((signed long)UBM_AV));
-	temp_SL/=100L;
-	ubat_avg_down=(signed short)temp_SL;
+	for(i=0;i<5;i++)
+		{
+		if((Ubat_e_imbalance[i]<(-UBM_AV))||(Ubat_e_imbalance[i]>UBM_AV))
+			{
+			if(Ubat_e_imbalance_cnt[i]<3000)Ubat_e_imbalance_cnt[i]++;
+			}
+		else Ubat_e_imbalance_cnt[i]=0; 
+		if(i>=bat_cell_number)Ubat_e_imbalance_cnt[i]=0;
+		
+		if(Ubat_e_imbalance_cnt[i]>3000-10)Ubat_e_imbalance_stat[i]=1;
+		else if(Ubat_e_imbalance_cnt[i]<10)Ubat_e_imbalance_stat[i]=0;		
+		}
 
+	if(Ubat_e_imbalance_stat[0]||Ubat_e_imbalance_stat[1]||Ubat_e_imbalance_stat[2]||Ubat_e_imbalance_stat[3]||Ubat_e_imbalance_stat[4])
+		{
+		if(!(St&0x80))avar_bat_as_hndl();
+		}
+
+/*
 	bAV=0;
 
 	if ((Ubat_e[0]>ubat_avg_up) || (Ubat_e[0]<ubat_avg_down)) bAV=1;
@@ -977,7 +1020,7 @@ if(UBM_AV)
 	else 
 		{
 		ubm_av_cnt=0;
-		}
+		}*/
 	}
 	  
 }

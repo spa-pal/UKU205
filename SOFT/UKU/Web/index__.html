@@ -1,0 +1,356 @@
+<!DOCTYPE html >
+<html lang="ru">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>УКУ</title>
+	<link href="uku.css" rel="stylesheet">
+	<!--
+	<style type="text/css" media="screen, print, projection">
+	body,
+	html {
+		margin:0;
+		padding:0;
+		color:#000;
+		background:#a7a09a;
+	}
+	#wrap {
+		width:750px;
+		margin:0 auto;
+		background:#99c;
+	}
+	#nav ul {
+		margin:0;
+		padding:0;
+		list-style:none;
+    }
+    #nav li {
+		display:inline;
+		margin:0;
+		padding:0;
+    }
+	#header {
+		padding:5px 10px;
+		background:#ddd;
+    }
+    h1 {
+		margin:0;
+    }
+    #nav {
+		padding:5px 10px;
+		background:#c99;
+    }
+    #main {
+		float:left;
+		width:480px;
+		padding:10px;
+		background:#9c9;
+    }
+    h2 {
+		margin:0 0 1em;
+    }
+    #sidebar {
+		float:right;
+		width:230px;
+		padding:10px;
+		background:#99c;
+    }
+    #footer {
+		clear:both;
+		padding:5px 10px;
+		background:#cc9;
+    }
+    #footer p {
+		margin:0;
+    }
+
+    #spa_adress {
+
+    }
+    
+	* html #footer {
+		height:1px;
+    }
+
+	</style>
+	-->
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+	<script>
+
+		var batTblIsPainted=0;
+		var srcTblIsPainted=0;
+		var invTblIsPainted=0;
+		var bypasTblIsPainted=0;
+		var numOfBat=0;
+		var numOfSrc=0;
+		var numOfInv=0;
+		var numOfBypas=0;	
+		var src_data= new Array(16);
+		var palDict = {
+			A : "А",
+			B : "Б",
+			C : "Ц",
+			D : "Д",
+			E : "Е",
+			F : "Ф",
+			G : "Г",
+			H : "Х",
+			I : "И",
+			J : "Й",
+			K : "К",
+			L : "Л",
+			M : "М",
+			N : "Н",
+			O : "О",
+			P : "П",
+			Q : "Я",
+			R : "Р",
+			S : "С",
+			T : "Т",
+			U : "У",
+			V : "Ю",
+			W : "В",
+			XA : "Ш",
+			Y : "Ч",
+			Z : "З",
+			XE : "Ё",
+			XC : "Ж",
+			XD : "Щ",
+			XB : "Ъ",
+			XF : "Ы",
+			XG : "Ь",
+			XH : "Э",
+			a : "а",
+			b : "б",
+			c : "ц",
+			d : "д",
+			e : "е",
+			f : "ф",
+			g : "г",
+			h : "х",
+			i : "и",
+			j : "й",
+			k : "к",
+			l : "л",
+			m : "м",
+			n : "н",
+			o : "о",
+			p : "п",
+			q : "я",
+			r : "р",
+			s : "с",
+			t : "т",
+			u : "у",
+			v : "ю",
+			w : "в",
+			Xa : "ш",
+			y : "ч",
+			z : "з",
+			Xe : "ё",
+			Xc : "ж",
+			Xd : "щ",
+			Xb : "ъ",
+			Xf : "ы",
+			Xg : "ь",
+			Xh : "э",
+			Xi : "°",
+			Xj : "№"
+
+		};
+	  
+	  	$( function() {
+			console.log("Страница загружена");
+	  	} );
+
+		function dataUpdate(){
+			var data = {};
+			$.getJSON( "uku.cgx", data, success );
+		}
+		
+		function palDecoder(input) {
+			var output = "",i=0;
+		
+			/*for (var i = 0; i < input.length; i++){
+
+	            var outputSign = input.charCodeAt(i);  
+
+	            if (outputSign == 0xc0){
+	                output += "А";
+	            } else if (outputSign == 0xc1){
+	                output += "Б";
+	            } else if (outputSign == "i"){
+	                output += 1;                    
+	            } else if (outputSign == "o"){
+	                output += 0;
+	            } else {
+	            output += outputSign;
+	            }	
+	        }*/
+
+	        while (input[i]){
+	        	if(input[i]=='^'){
+	        		if(input[++i]=='X'){
+	        			output+=palDict[input[i]+input[i+1]];
+	        			i++;
+	        			i++;
+	        		}
+	        		else {output += palDict[input[i]];
+	        		i++;
+	        		}
+	        	}
+	        	else {
+	        		output +=input[i++];
+	        	}
+	        }
+	        return output;
+		}
+	 	function success ( inputData ) {
+			numOfBat=inputData.numOfBat;
+			numOfSrc=inputData.numOfSrc;
+			numOfInv=inputData.numOfInv;
+			numOfBypas=inputData.numOfBypas;
+			/*productModel=inputData.model;*/
+			document.getElementById("dev_name").innerHTML=palDecoder(inputData.model);
+			document.getElementById("dev_serial").innerHTML="S№"+palDecoder(inputData.serial);
+			document.getElementById("dev_place").innerHTML=palDecoder(inputData.place);
+
+			if(numOfSrc) {
+				for(var i=0; i<numOfSrc; i++) {
+					var finder= "src" + (i + 1) + "Tm";
+					/*src_data[i] = inputData.src1Tm;*/
+					src_data[i] = inputData[finder].split(" ");
+				/*src_data[0] = inputData.src1Tm.split(" ");
+				src_data[1] = inputData.src2Tm.split(" ");
+				src_data[2] = inputData.src3Tm.split(" ");
+				src_data[3] = inputData.src4Tm.split(" ");
+				src_data[4] = inputData.src5Tm.split(" ");
+				src_data[5] = inputData.src6Tm.split(" ");
+				src_data[6] = inputData.src7Tm.split(" ");
+				src_data[7] = inputData.src8Tm.split(" ");
+				src_data[8] = inputData.src9Tm.split(" ");
+				src_data[9] = inputData.src10Tm.split(" ");	*/			
+				}
+			}
+
+
+			if (numOfSrc) {
+				if (srcTblIsPainted==0) {
+					var myTable = '' ;
+					myTable += '<table id="srcTable"  cellspacing=0 cellpadding=2 border=1>' ;
+					myTable += '<col width="100" valign="middle" align="left">' ;
+   					myTable += '<col width="100" valign="middle" text-align="right" class = "abc">' ;
+   					myTable += '<col width="100" valign="middle" align="justify">' ;
+   					myTable += '<col width="100" valign="middle" align="justify">' ;
+   					myTable += '<col width="200" valign="middle" align="justify">' ;
+   					/*myTable += '<col width="100" valign="middle" align="justify">' ;*/
+
+					myTable +=  "<thead>" ;
+					myTable +=   "<tr>";
+					myTable +=    "<th>"     + " №  " + 	"</th>";
+					myTable +=    "<th>"     + "Uвых." +     "</th>";
+					myTable +=    "<th>"     + "Iвых." +     "</th>";
+					myTable +=    "<th>"     + "Tрад." +     "</th>";
+					myTable +=    "<th>"     + "Статус" +     "</th>";
+					/*myTable +=    "<th>"     + "Авария" +     "</th>";*/					
+					myTable +=   "</tr>" ;
+					myTable +=  "</thead>" ;
+					myTable +=  "<tbody>" ;
+
+					for (var i = 0; i < numOfSrc; i++) {
+					    myTable +=    '<tr>';
+					    myTable += '<td>';
+					    myTable += i+1;
+					    myTable += "</td>";
+					    myTable += '<td class="rightAligned" id = "u_src_'+i+'" >';
+					   	/*if(dict[i][2]=="INT")myTable += set[i][0]+dict[i][1];
+					    else if(dict[i][2]=="INT/10")myTable += set[i][0]/10+dict[i][1];
+					    else if(dict[i][2]=="INT/100")myTable += set[i][0]/100+dict[i][1];
+					    else if(dict[i][2]=="STRING")myTable += set[i][1];*/
+					    /*myTable += set[i][0]+dict[i][1];*/
+					    myTable += "</td>";
+					    myTable += '<td class="rightAligned" id = "i_src_'+i+'" >';
+					    myTable += "</td>";
+					    myTable += '<td class="rightAligned" id = "t_src_'+i+'" >';
+					    myTable += "</td>";
+					    myTable += '<td class="rightAligned" id = "stat_src_'+i+'" >';
+					    myTable += "</td>";
+					    /*myTable += '<td class="rightAligned" id = "avar_src_'+i+'" >';*/
+					    myTable += "</tr>";
+					}
+					myTable +=  "</tbody>" ;
+					myTable += "</table>" ;
+
+					$("#result").append(myTable) ;
+					srcTblIsPainted=1;
+				} 
+				else {
+					for(i=0;i<numOfSrc;i++) {
+						/*var idFild="u_src_"+i;*/
+						$("#u_src_"+i).text(src_data[i][0]/10 + "В");
+						$("#i_src_"+i).text(src_data[i][1]/10 + "А");
+						$("#t_src_"+i).text(src_data[i][2] + "°C");
+						$("#stat_src_"+i).text(bps_status_string[src_data[i][3]]);
+						/*$("#avar_src_"+i).text(src_data[i][4]);*/
+					}
+				}
+			}
+
+	      /*var data1 = inputData.abcd ;
+	      var data2 = inputData.efgh ;
+		  console.log("Данные получены");
+		  console.log(data1);
+		  console.log(data2);
+		  $("#Data1").text(data1);
+		  $("#Data2").text(data2);
+		  $("#Data3").text(inputData.Uout);*/
+	    }
+		
+		setInterval(dataUpdate,500);
+	</script>	
+</head>
+<body>
+<div id="wrap">
+	<div id="dev_header">
+		<div id="dev_name"> </div>
+		<div id="dev_place"> </div>
+		<div id="dev_serial"> </div>
+	</div>
+	<div id="nav">
+		<ul>
+			<li><a href="http://ruseller.com">Опция 1</a></li>
+			<li><a href="http://ruseller.com">Опция 2</a></li>
+			<li><a href="http://ruseller.com">Опция 3</a></li>
+			<li><a href="http://ruseller.com">Опция 4</a></li>
+			<li><a href="http://ruseller.com">Опция 5</a></li>
+		</ul>
+	</div>
+	<div id="main">
+		<h2 align = "middle">Колонка 1</h2>
+		<div id= "result"></div>
+		<p><a href="http://ruseller.com" target="_blank">RUSELLER.COM</a></p>
+		<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Mauris 
+vel magna. Mauris risus nunc, tristique varius, gravida in, lacinia vel,
+ elit. Nam ornare, felis non faucibus molestie, nulla augue adipiscing 
+mauris, a nonummy diam ligula ut risus. Praesent varius. Cum sociis 
+natoque penatibus et magnis dis parturient montes, nascetur ridiculus 
+mus.</p>
+		
+		<h3>Consectetuer adipiscing elit</h3>
+
+
+	</div>
+	<div id="sidebar">
+		<ul>
+			<li><a href="uku.html">Главная</a></li>
+			<li><a href="set.html">Установки</a></li>
+			<li><a href="log.html">Журнал событий</a></li>
+			<li><a href="settings.html">Устан</a></li>
+		</ul>
+	</div>
+</div>
+<div id="footer">
+	<a class="spa_adress" href="http://vorpostnsk.ru">"Системы промавтоматики"</a>
+</div>
+
+</body></html>

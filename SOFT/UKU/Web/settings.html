@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<title>Установки</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<style type="text/css">
+	body {
+		background: linear-gradient(57deg, rgba(0, 0, 0, 0.31), rgba(255, 255, 255, 1));
+	}
+	.rightAligned{
+		text-align: right;
+	}
+	.btn {
+		width: 200;
+	}	
+</style>
+</head>
+  
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="dict.js"></script>
+ 
+<script>
+  
+  var cnter=0;
+  var isPainted=0;
+
+  $( function() {
+	console.log("Страница установок загружена");
+  	
+  	
+  	$("#Data1").text(cnter);
+    
+  } );
+
+	function dataSetUpdate(){
+		var data = {};
+		$.getJSON( "set.cgx", data, success );
+	}
+	function buttonPressing(input_,input_1) {
+		var data = {};
+		cnter ++;
+		$("#Data1").text(cnter);
+		console.log("нажата кнопка " + input_);
+		$.post("set.cgx",data,success1);
+		console.log("Отправлен запрос");
+		/*{ but: input_, data: input_1 }*/
+	}
+
+	function success1() {
+      console.log("Пришел ответ");
+  	}
+
+	function controlGenerator(num) {
+		var output="";
+		if(dict[num][3]=="INCDEC") {
+			/*output = 	'<input value="-' + num + '" type="button" onclick="buttonPressing()" class = "btn">';
+			output += 	'<input value="+' + num + '" type="button" onclick="alert(\'Клик+!\')" class = "btn">';*/
+			output = 	'<button id="but' + num +'mi" style="width:50px"  value="-' + num + '" type="button" onclick="buttonPressing(this.id)" class = "btn"> - </button>';
+			output += 	'<button id="but' + num +'pl" style="width:50px"  value="+' + num + '" type="button" onclick="buttonPressing(this.id,this.value)" class = "btn"> + </button>';
+		}
+		return output;
+	}
+
+ 	function success ( inputData ) {
+      var numOfSets = inputData.numOfSet ;
+      /*var set1 = inputData.s1.split(",");
+      //var set2 = inputData.s2.split(",") ;*/
+      var set = new Array(10);
+      set[0] = inputData.s01.split(",");
+      set[1] = inputData.s02.split(",");
+      set[2] = inputData.s03.split(",");
+      set[3] = inputData.s04.split(",");
+      set[4] = inputData.s05.split(",");      
+	  console.log("Данные получены");
+	  /*console.log(data1);
+	  console.log(data2);
+	  $("#Data1").text(numOfSets);*/
+	  $("#Data2").text(set[0][4]);
+	  $("#Data3").text(set[1][4]);
+
+	  if(isPainted==0) {
+	  $("#setTable").remove(); 
+		var myTable = '' ;
+		myTable += '<table id="setTable"  cellspacing=0 cellpadding=2 border=1>' ;
+		myTable += '<col width="250" valign="middle" align="left">' ;
+   		myTable += '<col width="100" valign="middle" text-align="right" class = "abc">' ;
+   		myTable += '<col width="300" valign="middle" align="justify">' ;
+		myTable +=  "<thead>" ;
+		myTable +=   "<tr>";
+		myTable +=    "<th>"     + "Параметр" +       "</th>";
+		myTable +=    "<th>"     + "Значение" +       "</th>";
+		myTable +=    "<th>"     + "Изменение" +       "</th>";
+		myTable +=   "</tr>" ;
+		myTable +=  "</thead>" ;
+		myTable +=  "<tbody>" ;
+
+		for (var i = 0; i < numOfSets; i++) {
+		    myTable +=    '<tr>';
+		    myTable += '<td>';
+		    myTable += dict[i][0];
+		    myTable += "</td>";
+		    myTable += '<td class="rightAligned" id = "data'+i+'" >';
+		   	if(dict[i][2]=="INT")myTable += set[i][0]+dict[i][1];
+		    else if(dict[i][2]=="INT/10")myTable += set[i][0]/10+dict[i][1];
+		    else if(dict[i][2]=="INT/100")myTable += set[i][0]/100+dict[i][1];
+		    else if(dict[i][2]=="STRING")myTable += set[i][1];
+		    /*myTable += set[i][0]+dict[i][1];*/
+		    myTable += "</td>";
+		    myTable += '<td>';
+		    myTable += controlGenerator(i);
+		    myTable += "</td>";
+		    myTable += "</tr>";
+		}
+		myTable +=  "</tbody>" ;
+		myTable += "</table>" ;
+
+		$("#result").append(myTable) ;
+		isPainted=1;
+		}
+		else {
+			for(i=0;i<numOfSets;i++) {
+				var idFild="#data"+i;
+				if(dict[i][2]=="INT") $(idFild).text(set[i][0]+dict[i][1]);
+			    else if(dict[i][2]=="INT/10") $(idFild).text(set[i][0]/10+dict[i][1]);
+			    else if(dict[i][2]=="INT/100") $(idFild).text(set[i][0]/100+dict[i][1]);
+			    else if(dict[i][2]=="STRING") $(idFild).text(set[i][1]);
+				
+			}
+		}
+    }
+	
+	setInterval(dataSetUpdate,500);
+</script>
+
+</head>
+  
+<body>
+
+<div id= "label1">Количество параметров</div> 
+<div id= "Data1">---</div> 
+<div id= "label2">Данные2</div> 
+<div id= "Data2">---</div> 
+<div id= "label3">Данные3</div> 
+<div id= "Data3">---</div>
+<div id= "result">---</div>
+  
+<button id="getCnt">Получить данные</button>
+ 
+ <form name="test" method="post" action=" ">
+  <p><b>Ваше имя:</b><br>
+   <input type="text" size="40">
+  </p>
+  <p><b>Каким браузером в основном пользуетесь:</b><Br>
+   <input type="radio" name="browser" value="ie"> Internet Explorer<Br>
+   <input type="radio" name="browser" value="opera"> Opera<Br>
+   <input type="radio" name="browser" value="firefox"> Firefox<Br>
+  </p>
+  <p>Комментарий<Br>
+   <textarea name="comment" cols="40" rows="3"></textarea></p>
+  <p><input type="submit" value="Отправить">
+   <input type="reset" value="Очистить"></p>
+ </form>
+  
+</body>
+</html>

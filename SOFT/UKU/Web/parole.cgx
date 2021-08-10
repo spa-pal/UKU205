@@ -1,0 +1,6 @@
+t {
+c p1 "abcd": "%d", 
+c p2 "efgh": "%d",
+c p3 "Uout": "%s"
+t }
+.

@@ -50,6 +50,10 @@ signed short snmp_bat_capacity;
 signed short snmp_bat_charge;
 signed short snmp_bat_status; 
 
+signed short snmp_bat_cell1_voltage, snmp_bat_cell2_voltage, snmp_bat_cell3_voltage, snmp_bat_cell4_voltage, snmp_bat_cell5_voltage;
+signed short snmp_bat_cell1_imbalance, snmp_bat_cell2_imbalance, snmp_bat_cell3_imbalance, snmp_bat_cell4_imbalance, snmp_bat_cell5_imbalance;
+signed short snmp_bat_cell1_imbalance_stat, snmp_bat_cell2_imbalance_stat, snmp_bat_cell3_imbalance_stat, snmp_bat_cell4_imbalance_stat, snmp_bat_cell5_imbalance_stat;
+
 //Состояние предохранителей
 signed short snmp_fuse_av_stat[3];
 signed short snmp_fuse_number[3];
@@ -204,6 +208,23 @@ snmp_bat_charge=zar_percent;
 snmp_bat_status=0;
 if(St&0x02)snmp_bat_status|=0x01;
 if(Ibat>0)snmp_bat_status|=0x02;
+
+snmp_bat_cell1_voltage=Ubat_e[0];
+snmp_bat_cell2_voltage=Ubat_e[1];
+snmp_bat_cell3_voltage=Ubat_e[2];
+snmp_bat_cell4_voltage=Ubat_e[3];
+snmp_bat_cell5_voltage=Ubat_e[4];
+snmp_bat_cell1_imbalance=Ubat_e_imbalance[0];
+snmp_bat_cell2_imbalance=Ubat_e_imbalance[1];
+snmp_bat_cell3_imbalance=Ubat_e_imbalance[2];
+snmp_bat_cell4_imbalance=Ubat_e_imbalance[3];
+snmp_bat_cell5_imbalance=Ubat_e_imbalance[4];
+snmp_bat_cell1_imbalance_stat=Ubat_e_imbalance_stat[0];
+snmp_bat_cell2_imbalance_stat=Ubat_e_imbalance_stat[1];
+snmp_bat_cell3_imbalance_stat=Ubat_e_imbalance_stat[2];
+snmp_bat_cell4_imbalance_stat=Ubat_e_imbalance_stat[3];
+snmp_bat_cell5_imbalance_stat=Ubat_e_imbalance_stat[4];
+
 
 
 if(spc_stat==spc_OFF) snmp_spc_stat=0;

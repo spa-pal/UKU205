@@ -1,0 +1,131 @@
+<!DOCTYPE html >
+<html lang="ru">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Журнал событий УКУ</title>
+	<link href="uku.css" rel="stylesheet">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="pal_decoder.js"></script>
+	<script>
+
+		var logTblIsPainted=0;
+		var logTblIsFilled=0;
+		var log_data= new Array(64);
+		var deepOfLog=0;
+
+	  	$( function() {
+			console.log("Страница загружена");
+	  	} );
+
+		function dataUpdate(num){
+			var data = {"num" : num};
+			$.getJSON( "log.cgx", data, success );
+		}
+		
+	 	function success ( inputData ) {
+	 		deepOfLog=inputData.logDeep;
+			numOfLogItem=inputData.itemNumber;
+			document.getElementById("dev_name").innerHTML=palDecoder(inputData.model);
+			document.getElementById("dev_serial").innerHTML="S№"+palDecoder(inputData.serial);
+			document.getElementById("dev_place").innerHTML=palDecoder(inputData.place);
+
+			if(deepOfLog) {
+				for(var i=0; i<deepOfLog; i++) {
+					log_data[numOfLogItem] = inputData.logItem.split("><");
+				}
+				if(numOfLogItem<deepOfLog-1)setTimeout(dataUpdate,500);
+			}
+			else {
+				$("#item1_head").text("ЖУРНАЛ СОБЫТИЙ ПУСТ");
+			}
+
+
+			if (deepOfLog) {
+				if (logTblIsPainted==0) {
+					var myTable = '' ;
+					myTable += '<table id="logTable"  cellspacing=0 cellpadding=2 border=1>' ;
+					myTable += '<col width="20" valign="middle" align="left">' ;
+					myTable += '<col width="20%" valign="middle" align="left">' ;
+   					myTable += '<col width="20%" valign="middle" text-align="right" class = "abc">' ;
+   					myTable += '<col width="60%" valign="middle" align="justify">' ;
+ 
+					myTable +=  "<thead>" ;
+					myTable +=   "<tr>";
+					myTable +=    "<th>"     + " № " + 	"</th>";
+					myTable +=    "<th>"     + "Начало" +     "</th>";
+					myTable +=    "<th>"     + "Окончание" +     "</th>";
+					myTable +=    "<th>"     + "Событие" +     "</th>";
+					myTable +=   "</tr>" ;
+					myTable +=  "</thead>" ;
+					myTable +=  "<tbody>" ;
+
+					for (var i = 0; i < deepOfLog; i++) {
+					    myTable +=    '<tr>';
+					    myTable += '<td>';
+					    myTable += i+1;
+					    myTable += "</td>";
+					    myTable += '<td class="rightAligned" id = "log_item_beg_time'+i+'" >';
+					    myTable += '<div class="centerAligned" id = "log_item_beg_time_'+i+'" >';
+					    myTable += "</div>";
+					    myTable += '<div class="centerAligned" id = "log_item_beg_data_'+i+'" >';
+					    myTable += "</div>";
+					    myTable += "</td>";
+					    myTable += '<td class="rightAligned" id = "log_item_end_time'+i+'" >';
+					    myTable += "</td>";
+					    myTable += '<td class="rightAligned" id = "log_item_string'+i+'" >';
+					}
+					myTable +=  "</tbody>" ;
+					myTable += "</table>" ;
+
+					$("#result").append(myTable) ;
+					logTblIsPainted=1;
+					logTblIsFilled=0;
+				} 
+				else {
+					for(i=0;i<deepOfLog;i++) {
+						$("#log_item_beg_time_"+i).text(palDecoder(log_data[i][0]));
+						$("#log_item_beg_data_"+i).text(palDecoder(log_data[i][1]));
+						$("#log_item_end_time"+i).text(palDecoder(log_data[i][2]));
+						$("#log_item_string"+i).text(palDecoder(log_data[i][3]));
+					}
+				}
+			}
+	    }
+		
+		dataUpdate();
+	</script>	
+</head>
+<body>
+<div id="wrap">
+	<div id="dev_header">
+		<div id="dev_name"> </div>
+		<div id="dev_place"> </div>
+		<div id="dev_serial"> </div>
+	</div>
+	<div id="nav">
+		<ul>
+			<li><a href="http://ruseller.com">Опция 1</a></li>
+			<li><a href="http://ruseller.com">Опция 2</a></li>
+			<li><a href="http://ruseller.com">Опция 3</a></li>
+			<li><a href="http://ruseller.com">Опция 4</a></li>
+			<li><a href="http://ruseller.com">Опция 5</a></li>
+		</ul>
+	</div>
+	<div id="main">
+		<p><h2 id="item1_head" align = "middle"></h2></p>
+		<div id= "item1"></div>
+		<p><h2 id="item2_head" align = "middle"></h2></p>
+		<div id= "item2"></div>		
+	</div>
+	<div id="sidebar">
+		<ul>
+			<li><a href="index.htm">Главная</a></li>
+			<li><a href="set.html">Установки</a></li>
+			<li><a href="log.html">Журнал событий</a></li>
+		</ul>
+	</div>
+</div>
+<div id="footer">
+	<a class="spa_adress" href="http://vorpostnsk.ru">"Системы промавтоматики"</a>
+</div>
+</body></html>

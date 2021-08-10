@@ -236,7 +236,11 @@ short main_cnt;
 //—осто€ние батареи
 signed short t_b,Ubat,Ibat;
 signed short Ubat_part[4];		//напр€жени€ промежуточных точек батареи относительно земли
-signed short Ubat_e[5];		    	//напр€жени€ банок батареи
+signed short Ubat_e[5];		    	//напр€жени€ €чеек батареи
+signed short Ubat_e_imbalance[5];	//разбалансы €чеек батареи в процентах (отношение отклонени€ от среднего к среднему)
+signed short Ubat_e_imbalance_cnt[5];	//счетчики разбаланса €чеек батареи (антидребезг 10 минут)
+char 		 Ubat_e_imbalance_stat[5];	//статусы разбаланса €чеек батареи 
+
 signed long zar_cnt,zar_cnt_ke;
 signed char zar_percent;
 char cnt_wrk;
@@ -5381,7 +5385,7 @@ else if(ind==iSet)
 		{
 		if(but==butE)
 		     {
-		     tree_down(-1,0);
+		     tree_down(0,0);
 		     ret(0);
 		     }
 		}		
@@ -7687,7 +7691,7 @@ else if(ind==iK)
 			}				
           else if(sub_ind==5)
 			{
-	          tree_down(-1,0);
+	          tree_down(0,0);
 	          ret(0);
                }	               			
 		}			
@@ -8093,6 +8097,8 @@ else if((ind==iPrl_bat_in_out)||(ind==iSet_prl)||(ind==iK_prl)
 				/*ind=iSet;
 				sub_ind=0;
 				index_set=0;*/
+				parol_init();
+				tree_down(0,0);
 				tree_up(iSet,0,0,0);
 				ret(1000);
 				}
@@ -8108,6 +8114,8 @@ else if((ind==iPrl_bat_in_out)||(ind==iSet_prl)||(ind==iK_prl)
 				{
 				//ind=iK_pdp;
 				//ret_ind(iK,0,15);
+				parol_init();
+				tree_down(0,0);
 				tree_up(iK,0,0,0);
 				tree_up(iK_pdp,0,0,0);
 				
@@ -8894,7 +8902,7 @@ if (socket_udp != 0)
 
 while (1) 
 	{
-     timer_poll ();
+//     timer_poll ();
      main_TcpNet ();
 //	static char temp;
 	if(bRXIN0)

@@ -128,6 +128,21 @@
 #define DISPLAY_BAT_ENTRY_CAPACITY			1,5
 #define DISPLAY_BAT_ENTRY_CHARGE			1,6
 #define DISPLAY_BAT_ENTRY_STATUS			1,7
+#define DISPLAY_BAT_CELL_1_VOLTAGE			2,1
+#define DISPLAY_BAT_CELL_2_VOLTAGE			2,2
+#define DISPLAY_BAT_CELL_3_VOLTAGE			2,3
+#define DISPLAY_BAT_CELL_4_VOLTAGE			2,4
+#define DISPLAY_BAT_CELL_5_VOLTAGE			2,5
+#define DISPLAY_BAT_CELL_1_IMBALANCE		2,11
+#define DISPLAY_BAT_CELL_2_IMBALANCE		2,12
+#define DISPLAY_BAT_CELL_3_IMBALANCE		2,13
+#define DISPLAY_BAT_CELL_4_IMBALANCE		2,14
+#define DISPLAY_BAT_CELL_5_IMBALANCE		2,15
+#define DISPLAY_BAT_CELL_1_IMBALANCE_STATUS	2,21
+#define DISPLAY_BAT_CELL_2_IMBALANCE_STATUS	2,22
+#define DISPLAY_BAT_CELL_3_IMBALANCE_STATUS	2,23
+#define DISPLAY_BAT_CELL_4_IMBALANCE_STATUS	2,24
+#define DISPLAY_BAT_CELL_5_IMBALANCE_STATUS	2,25
 
 #define DISPLAY_SPEC				6
 #define DISPLAY_SPEC_STAT				1
@@ -427,7 +442,10 @@ extern short main_cnt;
 //—осто€ние батареи
 extern signed short t_b,Ubat,Ibat;
 extern signed short Ubat_part[4];			//напр€жени€ промежуточных точек батареи относительно земли
-extern signed short Ubat_e[5];		    	//напр€жени€ банок батареи
+extern signed short Ubat_e[5];		    	//напр€жени€ €чеек батареи
+extern signed short Ubat_e_imbalance[5];	//разбалансы €чеек батареи в процентах (отношение отклонени€ от среднего к среднему)
+extern signed short Ubat_e_imbalance_cnt[5];	//счетчики разбаланса €чеек батареи (антидребезг 10 минут)
+extern char 		 Ubat_e_imbalance_stat[5];	//статусы разбаланса €чеек батареи 
 extern signed long zar_cnt,zar_cnt_ke;
 extern signed char zar_percent;
 extern char cnt_wrk;

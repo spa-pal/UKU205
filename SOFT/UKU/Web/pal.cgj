@@ -1,0 +1,5 @@
+t {
+c q 1 "ad": "%d"
+c g 1  size="10" id="ad_value" value="0x%03X"
+t }
+.

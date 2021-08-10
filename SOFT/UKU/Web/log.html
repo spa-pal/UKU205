@@ -1,0 +1,203 @@
+<!DOCTYPE html >
+<html lang="ru">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Журнал событий УКУ</title>
+	<link href="uku.css" rel="stylesheet">
+	<script src="jquery-1.7.min.js"></script>
+	<script src="dict.js"></script>
+	<script src="pal_decoder.js"></script>
+	<script>
+
+	  	var logTblIsPainted=0;
+		var logTblIsFilled=0;
+		var log_data= new Array(64);
+		var deepOfLog=0;
+		var dataOfRec="";
+		var alarmArray= new Array(3);
+
+	  	$( function() {
+			console.log("Страница загружена");
+	  	} );
+
+		function dataUpdate(num){
+			var data = {"num" : num};
+			$.getJSON( "log.cgx", data, success );
+			console.log("Запрос 1");
+		}
+		
+		function palStr2HexDecoder(input) {
+			var output = "",i=0;
+			while (input[i*2]&&input[i*2+1]){
+				output+= String.fromCharCode("0x"+input.substr(i*2,2)); 
+				i++;
+			}
+			return output;
+		}
+
+		function palAlarmDecoder(input) {
+			var mont_string=["   ","янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"]; 
+			var output = ["abc","def","Vfv","",""];
+			var beg_time_y=input[8].charCodeAt(0);
+			var beg_time_mnth=input[9].charCodeAt(0);
+			var beg_time_d=input[10].charCodeAt(0);
+			var beg_time_h=input[12].charCodeAt(0);
+			var beg_time_m=input[13].charCodeAt(0);
+			var beg_time_s=input[14].charCodeAt(0);
+			var end_time_y=input[16].charCodeAt(0);
+			var end_time_mnth=input[17].charCodeAt(0);
+			var end_time_d=input[18].charCodeAt(0);
+			var end_time_h=input[20].charCodeAt(0);
+			var end_time_m=input[21].charCodeAt(0);
+			var end_time_s=input[22].charCodeAt(0);			
+
+			output[1]=pad(beg_time_h,2)+"-"+pad(beg_time_m,2)+"-"+pad(beg_time_s,2);
+			output[2]=pad(beg_time_d,2)+"-"+mont_string[beg_time_mnth]+"-"+pad(beg_time_y,2);
+
+			if(input.substr(16,16)=="AAAAAAAAAAAAAAAA"){
+				output[3]="Не";
+				output[4]="устранена";
+			}
+			else{
+				output[3]=pad(end_time_h,2)+"-"+pad(end_time_m,2)+"-"+pad(end_time_s,2);
+				output[4]=pad(end_time_d,2)+"-"+mont_string[end_time_mnth]+"-"+pad(end_time_y,2);
+			}
+
+
+			if(input[0]=='U'){
+				if(input[2]=='R'){
+					output[0]="Перезагрузка УКУ"	
+				}
+			}
+			else if(input[0]=='P'){
+				if(input[2]=='A'){
+					output[0]="Авария питающей сети, напряжение занижено"
+				}
+				else if(input[2]=='B'){
+					output[0]="Авария питающей сети, напряжение завышено"
+				}
+			}
+			else if(input[0]=='S'){
+				output[0]="Авария источника №";
+				output[0]+=(input[1].charCodeAt(0)+1)+". ";
+				if(input[2]=='T')output[0]+="Перегрев.";
+				else if(input[2]=='U')output[0]+="Завышено выходное напряжение";
+				else if(input[2]=='u')output[0]+="Занижено выходное напряжение";
+				else if(input[2]=='L')output[0]+="Потеряна связь с источником";	
+			}
+			else if(input[0]=='B'){
+				var batNum=(input[1].charCodeAt(0)+1);
+				if(input[2]=='C'){output[0]="Авария батареи №" + batNum + ". Батарея неопределена";}
+				else if(input[2]=='S'){output[0]="Авария ассимметрии батареи №" + batNum + ".";}
+				else if(input[2]=='W'){output[0]="Разряд батареи №" + batNum + ".";}
+				else if(input[2]=='Z'){output[0]="Выравнивающий заряд батареи №" + batNum + ".";}
+				else if(input[2]=='K'){output[0]="Контроль емкости батареи №" + batNum + ".";}
+			}			
+
+			return output;
+		}
+
+	 	function success ( inputData ) {
+	 		deepOfLog=inputData.logDeep;
+			numOfLogItem=inputData.itemNumber;
+			document.getElementById("dev_name").innerHTML=palDecoder(inputData.model);
+			document.getElementById("dev_serial").innerHTML="S№"+palDecoder(inputData.serial);
+			document.getElementById("dev_place").innerHTML=palDecoder(inputData.place);
+			dataOfRec=inputData.logItem;
+			dataOfRec=palStr2HexDecoder(dataOfRec);
+
+			alarmArray=palAlarmDecoder(dataOfRec);
+
+			log_data[numOfLogItem] = alarmArray;
+
+			if(deepOfLog!="0") {
+				$("#item1_head").text("ЖУРНАЛ СОБЫТИЙ");
+				/*for(var i=0; i<deepOfLog; i++) {
+					log_data[numOfLogItem] = inputData.logItem.split("><");
+				}*/
+				if(numOfLogItem<deepOfLog-1)setTimeout(dataUpdate,100);
+			}
+			else {
+				$("#item1_head").text("ЖУРНАЛ СОБЫТИЙ ПУСТ");
+			}
+
+
+			if (deepOfLog!="0") {
+				if (logTblIsPainted==0) {
+					var myTable = '' ;
+					myTable += '<table id="logTable"  cellspacing=0 cellpadding=2 border=1>' ;
+					myTable += '<col width="5" valign="middle" align="left">' ;
+					myTable += '<col width="10%" valign="middle" align="left">' ;
+   					myTable += '<col width="10%" valign="middle" text-align="right" class = "abc">' ;
+   					myTable += '<col width="75%" valign="middle" align="justify">' ;
+ 
+					myTable +=  "<thead>" ;
+					myTable +=   "<tr>";
+					myTable +=    "<th>"     + " № " + 	"</th>";
+					myTable +=    "<th>"     + "Начало" +     "</th>";
+					myTable +=    "<th>"     + "Окончание" +     "</th>";
+					myTable +=    "<th>"     + "Событие" +     "</th>";
+					myTable +=   "</tr>" ;
+					myTable +=  "</thead>" ;
+					myTable +=  "<tbody>" ;
+
+					for (var i = 0; i < deepOfLog; i++) {
+					    myTable +=    '<tr>';
+					    myTable += '<td class="centerAligned">'+(i+1)+'</td><td class="rightAligned" id = "log_item_beg_time'+i+'" >';
+					    myTable += '<div class="centerAligned" id = "log_item_beg_time_'+i+'" ></div><div class="centerAligned" id = "log_item_beg_data_'+i+'" ></div>';
+					    myTable += "</td>";
+					    myTable += '<td class="rightAligned" id = "log_item_end_time'+i+'" >';
+					    myTable += '<div class="centerAligned" id = "log_item_end_time_'+i+'" >';
+					    myTable += "</div>";
+					    myTable += '<div class="centerAligned" id = "log_item_end_data_'+i+'" >';
+					    myTable += "</div>";					    
+					    myTable += "</td>";
+					    myTable += '<td><div style="padding-left:10px" class="rightAligned" id = "log_item_string'+i+'" ></div></td>';
+					}
+					myTable +=  "</tbody>" ;
+					myTable += "</table>" ;
+
+					$("#item1").append(myTable) ;
+					logTblIsPainted=1;
+					logTblIsFilled=0;
+				} 
+				if (logTblIsPainted==1) {
+					for(i=0;i<deepOfLog;i++) {
+						$("#log_item_beg_time_"+i).text(log_data[i][1]);
+						$("#log_item_beg_data_"+i).text(log_data[i][2]);
+						$("#log_item_end_time_"+i).text(log_data[i][3]);
+						$("#log_item_end_data_"+i).text(log_data[i][4]);
+						$("#log_item_string"+i).text(log_data[i][0]);
+					}
+				}
+			}
+	    }
+		
+		dataUpdate();
+	</script>	
+</head>
+<body>
+<div id="wrap">
+	<div id="dev_header">
+		<div id="dev_name"> </div>
+		<div id="dev_place"> </div>
+		<div id="dev_serial"> </div>
+	</div>
+
+	<div id="main">
+		<p><h2 id="item1_head" align = "middle"></h2></p>
+		<div id= "item1"></div>
+		<p><h2 id="item2_head" align = "middle"></h2></p>
+		<div id= "item2"></div>	
+	</div>
+	<div id="sidebar">
+		<ul>
+			<li><a href="index.htm">Главная</a></li>
+			<li><a href="set.html">Установки</a></li>
+			<li><a href="log.html">Журнал событий</a></li>
+		</ul>
+	</div>
+</div>
+<div id="footer">
+</div>
+</body></html>

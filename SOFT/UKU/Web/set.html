@@ -1,0 +1,356 @@
+<!DOCTYPE html >
+<html lang="ru">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Установки</title>
+	<link href="uku.css" rel="stylesheet">
+	<script src="jquery-1.7.min.js"></script>
+	<script src="dict.js"></script>
+	<script src="pal_decoder.js"></script>
+	<script>
+		var passwordFormIsPainted=0;
+		var passwordFormDeniedIsPainted=0;
+		var batTblIsPainted=0;
+		var srcTblIsPainted=0;
+		var invTblIsPainted=0;
+		var bypasTblIsPainted=0;
+		var numOfBat=0;
+		var numOfSrc=0;
+		var numOfInv=0;
+		var numOfBypas=0;	
+		var src_data= new Array(16);
+		var isPainted=0;
+	  
+	  	$( function() {
+			console.log("Страница загружена");
+			var div = document.createElement('div');
+			div.className = "alert alert-success";
+			div.id="window1";
+			div.innerHTML = '<span id = "span_pasw">Введите пароль</span><input type="password" class="large" name="PassWord" id="passWord"  autocomplete="off" maxlength="25" value=""><button id="pswBut" onclick="pswrdEntry(passWord.value)">Ввести</button>';
+			main.appendChild(div);
+	  	} );
+
+		function isCheck(name) {
+			var a="name='radio_input_2'";
+		     output=$('input[name="' + name + '"]:checked').val();
+		     return output;
+		}
+
+		function pswrdEntry(input) {
+			$.post("but.cgx",{ parol: input },function(){console.log("Пришел ответ на пароль")});
+			console.log("Отправлен пароль");
+		}
+		function dataUpdate(){
+			var data = {};
+			$.getJSON( "set.cgx", data, success );
+		}
+		function button_enter_press(input) {
+			var mainSelector=set_dict[input][4];
+			var parametrSet="";
+			var inp;
+			var inpSelector;
+			var mult=set_dict[input][3];
+
+			if(mainSelector=="INTINPUT"){
+				inpSelector="#text_input_"+input;
+				inp=$(inpSelector).val();
+				parametrSet=inp;
+				if(mult=="INT/10")parametrSet=inp*10;
+				else if(mult=="INT/100")parametrSet=inp*100;
+				else if(mult=="INT/1000")parametrSet=inp*1000;
+			}
+			else if(mainSelector=="STRINGINPUT"){
+				inpSelector="#text_input_"+input;
+				inp=$(inpSelector).val();
+				parametrSet=pal_cyr_coder(inp);
+			}
+			else if(mainSelector=="RADIOINPUT"){
+				inpSelector="radio_input_" + input;
+				inp=isCheck(inpSelector);
+				parametrSet=inp;
+			}
+			else if(mainSelector=="IPINPUT"){
+				
+				var ip_arr = new Array(4);
+				inpSelector="#text_input_"+input;
+				inp=$(inpSelector).val();
+				ip_arr = inp.split(".");
+				ip1=193;
+				ip2=194;
+				ip3=195;
+				ip4=196;
+				parametrSet=0x00000000;
+				parametrSet|=ip_arr[0]&0x000000ff;
+				parametrSet<<=8;
+				parametrSet|=ip_arr[1]&0x000000ff;
+				parametrSet<<=8;
+				parametrSet|=ip_arr[2]&0x000000ff;
+				parametrSet<<=8;
+				parametrSet|=ip_arr[3]&0x000000ff;
+			}
+			
+			$.post("but.cgx",{ param: set_dict[input][7], value: parametrSet},function(){console.log("Пришел ответ на пароль")});
+			console.log("Отправлен параметр");
+			
+		}
+
+		function controlGenerator(num) {
+			var output="";
+			if(set_dict[num][4]=="INCDEC") {
+				output = 	'<button id="but' + num +'mi" style="width:50px"  value="-' + num + '" type="button" onclick="buttonPressing(this.id)" class = "btn"> - </button>';
+				output += 	'<button id="but' + num +'pl" style="width:50px"  value="+' + num + '" type="button" onclick="buttonPressing(this.id,this.value)" class = "btn"> + </button>';
+			}
+			else if(set_dict[num][4]=="INTINPUT") {
+				var mmult =1;
+				if(set_dict[num][3]=="INT/10")mmult =10;
+				output +=	'<input id="text_input_' + num + '" type="text" size="42" class="digitInput">';
+				output += 	'<button id="but_enter_' + num + '" style="width:40px margin: 0 10px" onclick="button_enter_press(' + num + ')">Ввести</button>';/*,' + mmult + '*/
+			}
+			else if(set_dict[num][4]=="STRINGINPUT") {
+				output +=	'<input id="text_input_' + num + '" type="text" size="42" class="textInput">';
+				output += 	'<button id="but_enter_' + num + '" style="width:50px margin: 0 10px" onclick="button_enter_press(' + num + ')">Ввести</button>';
+			}
+			else if(set_dict[num][4]=="IPINPUT") {
+				output +=	'<input id="text_input_' + num + '" type="text" size="42" class="textInput">';
+				output += 	'<button id="but_enter_' + num + '" style="width:50px margin: 0 10px" onclick="button_enter_press(' + num + ')">Ввести</button>';
+			}
+
+			else if(set_dict[num][4]=="RADIOINPUT") {
+				numOfButtons = set_dict[num][6].length;
+				for(var i=0; i<numOfButtons;i++){
+					output +=	'<span><input name="radio_input_' + num + '" type="radio" value="' + i +'"> ' + set_dict[num][6][i]+'</span>';
+				}
+				output += 	'<button id="but_enter_' + num + '" style="width:50px margin: 0 10px" onclick="button_enter_press(' + num + ')">Ввести</button>';
+			}
+			else if(set_dict[num][4]=="EXECBUTTON") {
+				output += 	'<button id="but_enter_' + num + '" style="width:50px margin: 0 10px" onclick="button_enter_press(' + num + ')">Выполнить</button>';
+			}
+			else if(set_dict[num][4]=="NOCONTROL") {
+				output += 	'';
+			}
+			return output;
+		}
+
+
+	 	function success ( inputData ) {
+
+			document.getElementById("dev_name").innerHTML=palDecoder(inputData.model);
+			document.getElementById("dev_serial").innerHTML="S№"+palDecoder(inputData.serial);
+			document.getElementById("dev_place").innerHTML=palDecoder(inputData.place);
+
+			if(inputData.autorised=="DENIED"){
+				if(passwordFormDeniedIsPainted==0){
+					var span = document.createElement('div');
+					span.innerHTML = '<span>Пароль неверный повторите попытку!</span>';
+					span.id="span_denied";
+					var div = document.getElementsByClassName("alert");
+					window1.appendChild(span);
+					passwordFormDeniedIsPainted=1;
+  					setTimeout(function() {
+    				span.parentNode.removeChild(span);
+    				passwordFormDeniedIsPainted=0;
+  					}, 3000);					
+				}
+			}
+			else if(inputData.autorised=="ON") {
+
+				var div = document.getElementsByClassName("alert");
+				if(div[0]) div[0].parentNode.removeChild(div[0]);
+				
+
+				var numOfSets = inputData.numOfSet ;/*set_dict.length-1;*/
+				var set = new Array(100);
+				set[0] = inputData.s01.split(",");/*серийный номер*/ 
+				set[1] = inputData.s02.split(",");/*расположение*/
+				set[2] = inputData.s03.split(",");/*звуковая сигнализация*/
+				set[3] = inputData.s04.split(",");/*основной источник*/
+				set[4] = inputData.s05.split(",");/*автоматическое снятие сигнала аварий*/
+				set[5] = inputData.s06.split(",");/*мнемоника*/  
+				set[6] = inputData.s07.split(",");/*Umin.сети*/ 
+				set[7] = inputData.s08.split(",");/*Umax.сети*/ 
+				set[8] = inputData.s10.split(",");/*Imax*/  
+				set[9] = inputData.s11.split(",");/*Imin*/
+				set[12] = inputData.s14.split(",");/*Uб20*/  
+				set[13] = inputData.s15.split(",");/*Uб0*/    
+				set[10] = inputData.s12.split(",");/*Umax.ист*/  
+				/*set[11] = inputData.s13.split(",");/*Umin.ист*/ 
+				set[14] = inputData.s16.split(",");/*Uсигн*/
+				set[15] = inputData.s17.split(",");/*Iзmax*/
+				/*set[16] = inputData.s18.split(",");/*Tбатсигн*/
+				/*set[17] = inputData.s19.split(",");/*Tбатмакс*/	
+				/*set[18] = inputData.s20.split(",");/*Uвз*/
+				/*set[19] = inputData.s21.split(",");/*Tвз*/
+				/*set[20] = inputData.s22.split(",");/*tи.сигн*/
+				set[21] = inputData.s23.split(",");/*tи.max*/
+				/*set[22] = inputData.s24.split(",");/*TZAS*/
+				set[23] = inputData.s25.split(",");/*APV1*/
+				set[24] = inputData.s26.split(",");/*APV2*/
+				set[25] = inputData.s27.split(",");/*APV2 период*/
+				set[26] = inputData.s28.split(",");/*U0б*/
+				/*set[27] = inputData.s29.split(",");/*Tбат*/
+				/*set[28] = inputData.s30.split(",");/*Iкб*/
+				set[29] = inputData.s31.split(",");/*год*/
+				set[30] = inputData.s32.split(",");/*месяц*/
+				set[31] = inputData.s33.split(",");/*день*/
+				set[32] = inputData.s34.split(",");/*час*/
+				set[33] = inputData.s35.split(",");/*минуты*/
+				set[34] = inputData.s36.split(",");/*включенность синхронизации по SNTP*//*работает*/
+				/*set[35] = inputData.s37.split(",");/*АВЗ*/
+				/*set[36] = inputData.s38.split(",");/*SK1 Статус*/
+				/*set[37] = inputData.s39.split(",");/*SK1 Аварийный сигнал*/
+				/*set[38] = inputData.s40.split(",");/*SK1 Аварийный статус*/
+				/*set[39] = inputData.s41.split(",");/*SK2 Статус*/
+				/*set[40] = inputData.s42.split(",");/*SK2 Аварийный сигнал*/
+				/*set[41] = inputData.s43.split(",");/*SK2 Аварийный статус*/
+				/*set[42] = inputData.s44.split(",");/*SK3 Статус*/
+				/*set[43] = inputData.s45.split(",");/*SK3 Аварийный сигнал*/
+				/*set[44] = inputData.s46.split(",");/*SK3 Аварийный статус*/
+				/*set[45] = inputData.s47.split(",");/*SK4 Статус*/
+				/*set[46] = inputData.s48.split(",");/*SK4 Аварийный сигнал*/
+				/*set[47] = inputData.s49.split(",");/*SK4 Аварийный статус*/	
+				/*set[48] = inputData.s50.split(",");/*SK1 Отображение на экран*/
+				/*set[49] = inputData.s51.split(",");/*SK2 Отображение на экран*/
+				/*set[50] = inputData.s52.split(",");/*SK3 Отображение на экран*/
+				/*set[51] = inputData.s53.split(",");/*SK4 Отображение на экран*/
+				/*set[52] = inputData.s54.split(",");/*SK1 Звуковой сигнал*/
+				/*set[53] = inputData.s55.split(",");/*SK2 Звуковой сигнал*/
+				/*set[54] = inputData.s56.split(",");/*SK3 Звуковой сигнал*/
+				/*set[55] = inputData.s57.split(",");/*SK4 Звуковой сигнал*/	
+				set[56] = inputData.s58.split(",");/*SNTP часовой пояс*/	
+				set[57] = inputData.s59.split(",");/*источник синхорнизации SNTP*/
+				set[58] = inputData.s60.split(",");/*IP адресс сервера SNTP*/
+				set[59] = inputData.s61.split(",");/*NUMIST*/	
+				/*set[60] = inputData.s62.split(",");/*NUMPHASE*/	
+				set[61] = inputData.s63.split(",");/*NUMSK*/	
+				set[62] = inputData.s64.split(",");/*NUMDT*/
+				/*set[63] = inputData.s65.split(",");/*NUMMAKB*/
+				/*set[64] = inputData.s66.split(",");/*NUMDT*/	
+
+
+
+				console.log("Данные получены");
+
+			  	if(isPainted==0) {
+			  		$("#setTable").remove(); 
+					var myTable = '' ;
+					myTable += '<table id="setTable" width="100%" style="table-layout: fixed" cellspacing=0 cellpadding=2 border=1>' ;
+					myTable += '<col width="300" valign="middle" align="left">' ;
+			   		myTable += '<col width="30%" valign="middle" text-align="right" class = "abc">' ;
+			   		myTable += '<col width="70%" valign="middle" align="justify">' ;
+					myTable +=  "<thead>" ;
+					myTable +=   "<tr>";
+					myTable +=    "<th>"     + "Параметр" +       "</th>";
+					myTable +=    "<th>"     + "Значение" +       "</th>";
+					myTable +=    "<th>"     + "Изменение" +       "</th>";
+					myTable +=   "</tr>" ;
+					myTable +=  "</thead>" ;
+					myTable +=  "<tbody>" ;
+
+					for (var i = 0; i < numOfSets; i++) {
+						var nameOfParam=set_dict[i][0];
+						var titleOfParam=set_dict[i][1];
+						var unit=set_dict[i][2];
+						var valueOfParam;
+						if(set_dict[i][8]=="s00"){
+							myTable += '<tr>';
+						    myTable += '<td class="headering" colspan="3">';
+						    myTable += "<h2>";
+						    myTable += nameOfParam;
+						    myTable += "</h2>";
+						    myTable += "</td>";
+						    myTable += '<td>';
+						    myTable += "</td>";
+						    myTable += '<td>';
+						    myTable += "</td>";
+						    myTable += "</tr>";
+						}
+						else{
+							if(set_dict[i][5]=="DIAP"){
+								var _min=set_dict[i][6][0];
+								var _max=set_dict[i][6][1];
+								if(set_dict[i][3]=="INT/10"){
+									_min/=10;
+									_max/=10;
+								}
+								else if(set_dict[i][3]=="INT/100"){
+									_min/=100;
+									_max/=100;
+								} 
+								titleOfParam+=" Предельные значения " + _min + unit + " - " + _max + unit + ".";
+							}
+							else if(set_dict[i][5]=="MAXLENGTH"){ 
+								titleOfParam+=" Не более " + set_dict[i][6] + " символов, без запятых";
+							}
+							if(set_dict[i][3]=="INT") valueOfParam = set[set_dict[i][8]][0] + unit;
+						    else if(set_dict[i][3]=="INT/10") valueOfParam = set[set_dict[i][8]][0]/10 + unit;
+						    else if(set_dict[i][3]=="INT/100") valueOfParam = set[set_dict[i][8]][0]/100 + unit;
+						    else if(set_dict[i][3]=="STRING") valueOfParam = set[set_dict[i][8]][1];
+						    else if(set_dict[i][3]=="SET") valueOfParam = set_dict[i][6][set[set_dict[i][8]][0]];
+						    else if(set_dict[i][3]=="IP") valueOfParam = set[i];
+
+						    myTable += '<tr>';
+						    myTable += '<td title = "' + titleOfParam + '">';
+						    myTable += nameOfParam;
+						    myTable += "</td>";
+						    myTable += '<td class="rightAligned" id = "data'+i+'">';
+						   	myTable += valueOfParam;
+						    myTable += "</td>";
+						    myTable += '<td>';
+						    myTable += controlGenerator(i);
+						    myTable += "</td>";
+						    myTable += "</tr>";
+						}
+					}
+				myTable +=  "</tbody>" ;
+				myTable += "</table>" ;
+
+				$("#result").append(myTable) ;
+				isPainted=1;
+				}
+				else {
+					for(i=0;i<numOfSets;i++) {
+						var idFild="#data"+i;
+						if(set_dict[i][3]=="INT") $(idFild).text(set[set_dict[i][8]][0]+set_dict[i][2]);
+					    else if(set_dict[i][3]=="INT/10") $(idFild).text(set[set_dict[i][8]][0]/10+set_dict[i][2]);
+					    else if(set_dict[i][3]=="INT/100") $(idFild).text(set[set_dict[i][8]][0]/100+set_dict[i][2]);
+					    else if(set_dict[i][3]=="STRING") $(idFild).text(palDecoder(set[set_dict[i][8]][1]));
+					    else if(set_dict[i][3]=="ONOFF") $(idFild).text(set_dict[i][6][set[set_dict[i][8]][0]]);
+					    else if(set_dict[i][3]=="INTOFF") 
+					    		{
+					    		if(set[set_dict[i][8]][1]=="off")		$(idFild).text("ВЫКЛ");
+					    		else 								$(idFild).text(set[set_dict[i][8]][0]+set_dict[i][2]);
+					    		}
+					    else if(set_dict[i][3]=="NODATA") $(idFild).text("");
+					    else if(set_dict[i][3]=="IP") $(idFild).text(set[set_dict[i][8]][0]);
+						
+					}
+				}
+		    }
+	    }
+		
+		setInterval(dataUpdate,500);
+	</script>	
+</head>
+<body>
+<div id="wrap">
+	<div id="dev_header">
+		<div id="dev_name"> </div>
+		<div id="dev_place"> </div>
+		<div id="dev_serial"> </div>
+	</div>
+	<div id="main">
+		<div id= "result"></div>
+	</div>
+	<div id="sidebar">
+		<ul>
+			<li><a href="index.htm">Главная1</a></li>
+			<li><a href="set.html">Установки</a></li>
+			<li><a href="log.html">Журнал событий</a></li>
+		</ul>
+	</div>
+
+</div>
+<div id="footer">
+	<a class="spa_adress" href="http://vorpostnsk.ru" target="_blank">"Системы промавтоматики"</a>
+</div>
+</body></html>

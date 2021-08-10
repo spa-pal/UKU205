@@ -176,7 +176,12 @@ if(!((MONTH_AVZ>0)&&(MONTH_AVZ<13)))MONTH_AVZ=0;
 YEAR_AVZ=lc640_read_int(EE_YEAR_AVZ); 
 SNTP_ENABLE=lc640_read_int(EE_SNTP_ENABLE);
 SNTP_GMT=lc640_read_int(EE_SNTP_GMT);
+MODBUS_ADRESS=lc640_read_int(EE_MODBUS_ADRESS);
 
+for(i=0;i<30;i++)
+	{
+	snmp_model[i]=lc640_read(EE_MODEL+i);
+	}
 for(i=0;i<64;i++)
 	{
 	snmp_location[i]=lc640_read(EE_LOCATION+i);

@@ -38,6 +38,11 @@ extern signed short snmp_bat_capacity;
 extern signed short snmp_bat_charge;
 extern signed short snmp_bat_status;
 
+extern signed short snmp_bat_cell1_voltage, snmp_bat_cell2_voltage, snmp_bat_cell3_voltage, snmp_bat_cell4_voltage, snmp_bat_cell5_voltage;
+extern signed short snmp_bat_cell1_imbalance, snmp_bat_cell2_imbalance, snmp_bat_cell3_imbalance, snmp_bat_cell4_imbalance, snmp_bat_cell5_imbalance;
+extern signed short snmp_bat_cell1_imbalance_stat, snmp_bat_cell2_imbalance_stat, snmp_bat_cell3_imbalance_stat, snmp_bat_cell4_imbalance_stat, snmp_bat_cell5_imbalance_stat;
+
+
 //Состояние предохранителей
 extern signed short snmp_fuse_av_stat[3];
 extern signed short snmp_fuse_number[3];

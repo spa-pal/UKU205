@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<title>Пример AJAX</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+</head>
+  
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+ 
+<script>
+  
+  $( function() {
+	console.log("Страница загружена");
+  
+    $('#getCnt').click( function(){$.get("ad.cgx",{ name: "John", time: "2pm" },function(){console.log("Пришел ответ")});console.log("Отправлен запрос");});
+   
+
+ 
+  } );
+
+	function dataUpdate(){
+		var data = {};
+		$.getJSON( "pal.cgx", data, success );
+	}
+	
+ 	function success ( inputData ) {
+      var data1 = inputData.abcd ;
+      var data2 = inputData.efgh ;
+	  console.log("Данные получены");
+	  /*console.log(data1);
+	  console.log(data2);*/
+	  $("#Data1").text(data1);
+	  $("#Data2").text(data2);
+	  $("#Data3").text(inputData.Uout);
+    }
+	
+	setInterval(dataUpdate,500);
+</script>
+
+</head>
+  
+<body>
+
+<div id= "label1">Данные11</div> 
+<div id= "Data1">1234</div> 
+<div id= "label2">Данные2</div> 
+<div id= "Data2">1235</div> 
+<div id= "label3">Данные3</div> 
+<div id= "Data3"></div>
+  
+<button id="getCnt">Получить данные</button>
+  
+</body>
+</html>

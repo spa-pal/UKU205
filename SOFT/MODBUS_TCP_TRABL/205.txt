@@ -1,0 +1,47 @@
+No.     Time           Source                Destination           Protocol Length Info
+   7432 34.896219      192.168.1.9           192.168.1.240         TCP      66     54929 → 502 [SYN] Seq=0 Win=8192 Len=0 MSS=1460 WS=4 SACK_PERM=1
+
+Frame 7432: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface \Device\NPF_{587A4B3A-C48D-4C62-A231-AD7E36E7349D}, id 0
+Ethernet II, Src: ASUSTekC_b0:9b:4d (40:16:7e:b0:9b:4d), Dst: 00:73:04:00:30:39 (00:73:04:00:30:39)
+Internet Protocol Version 4, Src: 192.168.1.9, Dst: 192.168.1.240
+Transmission Control Protocol, Src Port: 54929, Dst Port: 502, Seq: 0, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   7433 34.896367      192.168.1.240         192.168.1.9           TCP      60     502 → 54929 [SYN, ACK] Seq=0 Ack=1 Win=4380 Len=0 MSS=1460
+
+Frame 7433: 60 bytes on wire (480 bits), 60 bytes captured (480 bits) on interface \Device\NPF_{587A4B3A-C48D-4C62-A231-AD7E36E7349D}, id 0
+Ethernet II, Src: 00:73:04:00:30:39 (00:73:04:00:30:39), Dst: ASUSTekC_b0:9b:4d (40:16:7e:b0:9b:4d)
+Internet Protocol Version 4, Src: 192.168.1.240, Dst: 192.168.1.9
+Transmission Control Protocol, Src Port: 502, Dst Port: 54929, Seq: 0, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   7434 34.896446      192.168.1.9           192.168.1.240         TCP      54     54929 → 502 [ACK] Seq=1 Ack=1 Win=64240 Len=0
+
+Frame 7434: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{587A4B3A-C48D-4C62-A231-AD7E36E7349D}, id 0
+Ethernet II, Src: ASUSTekC_b0:9b:4d (40:16:7e:b0:9b:4d), Dst: 00:73:04:00:30:39 (00:73:04:00:30:39)
+Internet Protocol Version 4, Src: 192.168.1.9, Dst: 192.168.1.240
+Transmission Control Protocol, Src Port: 54929, Dst Port: 502, Seq: 1, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   7453 35.011375      192.168.1.240         192.168.1.9           TCP      60     502 → 54929 [FIN, ACK] Seq=1 Ack=1 Win=4380 Len=0
+
+Frame 7453: 60 bytes on wire (480 bits), 60 bytes captured (480 bits) on interface \Device\NPF_{587A4B3A-C48D-4C62-A231-AD7E36E7349D}, id 0
+Ethernet II, Src: 00:73:04:00:30:39 (00:73:04:00:30:39), Dst: ASUSTekC_b0:9b:4d (40:16:7e:b0:9b:4d)
+Internet Protocol Version 4, Src: 192.168.1.240, Dst: 192.168.1.9
+Transmission Control Protocol, Src Port: 502, Dst Port: 54929, Seq: 1, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   7454 35.011437      192.168.1.9           192.168.1.240         TCP      54     54929 → 502 [ACK] Seq=1 Ack=2 Win=64240 Len=0
+
+Frame 7454: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{587A4B3A-C48D-4C62-A231-AD7E36E7349D}, id 0
+Ethernet II, Src: ASUSTekC_b0:9b:4d (40:16:7e:b0:9b:4d), Dst: 00:73:04:00:30:39 (00:73:04:00:30:39)
+Internet Protocol Version 4, Src: 192.168.1.9, Dst: 192.168.1.240
+Transmission Control Protocol, Src Port: 54929, Dst Port: 502, Seq: 1, Ack: 2, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   7491 35.231316      192.168.1.240         192.168.1.9           TCP      60     502 → 54929 [RST] Seq=2 Win=4380 Len=0
+
+Frame 7491: 60 bytes on wire (480 bits), 60 bytes captured (480 bits) on interface \Device\NPF_{587A4B3A-C48D-4C62-A231-AD7E36E7349D}, id 0
+Ethernet II, Src: 00:73:04:00:30:39 (00:73:04:00:30:39), Dst: ASUSTekC_b0:9b:4d (40:16:7e:b0:9b:4d)
+Internet Protocol Version 4, Src: 192.168.1.240, Dst: 192.168.1.9
+Transmission Control Protocol, Src Port: 502, Dst Port: 54929, Seq: 2, Len: 0

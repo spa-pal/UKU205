@@ -131,13 +131,30 @@ char* aaa_="abc";
 	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_SK, DISPLAY_SK_ENTRY_AV_STAT, 3},  			MIB_INT(snmp_sk_av_stat[2]),  	NULL},	//Напряжение БПС2
 	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_SK, DISPLAY_SK_ENTRY_AV_STAT, 4},  			MIB_INT(snmp_sk_av_stat[3]),  	NULL},	//Напряжение БПС2
 
-	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_NUMBER, 1},				MIB_INT(snmp_bat_number),  	NULL},	//Номер БПСа
-	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_VOLTAGE, 1},  				MIB_INT(snmp_bat_voltage),  	NULL},	//Номер БПСа
-	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_CURRENT, 1},  				MIB_INT(snmp_bat_current),  	NULL},	//Номер БПСа
-	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_TEMPERATURE, 1},  			MIB_INT(snmp_bat_temperature),NULL},	//Номер БПСа
-	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_CAPACITY, 1},  				MIB_INT(snmp_bat_capacity),  	NULL},	//Номер БПСа
-	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_CHARGE, 1},  				MIB_INT(snmp_bat_charge),  	NULL},	//Номер БПСа
-	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_STATUS, 1},  				MIB_INT(snmp_bat_status),  	NULL},	//Номер БПСа
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_NUMBER, 0},				MIB_INT(snmp_bat_number),  	NULL},	//Номер БПСа
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_VOLTAGE, 0},  				MIB_INT(snmp_bat_voltage),  	NULL},	//Номер БПСа
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_CURRENT, 0},  				MIB_INT(snmp_bat_current),  	NULL},	//Номер БПСа
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_TEMPERATURE,0},  			MIB_INT(snmp_bat_temperature),NULL},	//Номер БПСа
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_CAPACITY, 0},  				MIB_INT(snmp_bat_capacity),  	NULL},	//Номер БПСа
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_CHARGE, 0},  				MIB_INT(snmp_bat_charge),  	NULL},	//Номер БПСа
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_ENTRY_STATUS, 0},  				MIB_INT(snmp_bat_status),  	NULL},	//Номер БПСа
+
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_1_VOLTAGE, 0},				MIB_INT(snmp_bat_cell1_voltage),  	NULL},	//Напряжение ячейки №1 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_2_VOLTAGE, 0},				MIB_INT(snmp_bat_cell2_voltage),  	NULL},	//Напряжение ячейки №2 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_3_VOLTAGE, 0},				MIB_INT(snmp_bat_cell3_voltage),  	NULL},	//Напряжение ячейки №3 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_4_VOLTAGE, 0},				MIB_INT(snmp_bat_cell4_voltage),  	NULL},	//Напряжение ячейки №4 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_5_VOLTAGE, 0},				MIB_INT(snmp_bat_cell5_voltage),  	NULL},	//Напряжение ячейки №5 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_1_IMBALANCE, 0},				MIB_INT(snmp_bat_cell1_imbalance),  	NULL},	//Разбаланс ячейки №1 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_2_IMBALANCE, 0},				MIB_INT(snmp_bat_cell2_imbalance),  	NULL},	//Разбаланс ячейки №2 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_3_IMBALANCE, 0},				MIB_INT(snmp_bat_cell3_imbalance),  	NULL},	//Разбаланс ячейки №3 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_4_IMBALANCE, 0},				MIB_INT(snmp_bat_cell4_imbalance),  	NULL},	//Разбаланс ячейки №4 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_5_IMBALANCE, 0},				MIB_INT(snmp_bat_cell5_imbalance),  	NULL},	//Разбаланс ячейки №5 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_1_IMBALANCE_STATUS, 0},				MIB_INT(snmp_bat_cell1_imbalance_stat),  	NULL},	//Статус разбаланса ячейки №1 батареи 
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_2_IMBALANCE_STATUS, 0},				MIB_INT(snmp_bat_cell2_imbalance_stat),  	NULL},	//Статус разбаланса ячейки №2 батареи
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_3_IMBALANCE_STATUS, 0},				MIB_INT(snmp_bat_cell3_imbalance_stat),  	NULL},	//Статус разбаланса ячейки №3 батареи
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_4_IMBALANCE_STATUS, 0},				MIB_INT(snmp_bat_cell4_imbalance_stat),  	NULL},	//Статус разбаланса ячейки №4 батареи
+	{ MIB_INTEGER | MIB_ATR_RO,  	13, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_BAT, DISPLAY_BAT_CELL_5_IMBALANCE_STATUS, 0},				MIB_INT(snmp_bat_cell5_imbalance_stat),  	NULL},	//Статус разбаланса ячейки №5 батареи
+
 
 	{ MIB_INTEGER | MIB_ATR_RO, 	12, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_SPEC,DISPLAY_SPEC_STAT , 0},					MIB_INT(snmp_spc_stat),     NULL},
 	{ MIB_OCTET_STR | MIB_ATR_RO, 12, {OID_ENTERPRISE, OID_DEVICE, DISPLAY_SPEC,DISPLAY_SPEC_TRAP_MESSAGE , 0},			MIB_STR(snmp_spc_trap_message),     NULL},

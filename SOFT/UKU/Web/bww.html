@@ -1,0 +1,271 @@
+<!DOCTYPE html >
+<html lang="ru">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Установки</title>
+	<link href="uku.css" rel="stylesheet">
+	<script src="jquery-1.7.min.js"></script>
+	<script src="dict.js"></script>
+	<script src="pal_decoder.js"></script>
+	<script>
+		var passwordFormIsPainted=0;
+		var passwordFormDeniedIsPainted=0;
+		var batTblIsPainted=0;
+		var srcTblIsPainted=0;
+		var invTblIsPainted=0;
+		var bypasTblIsPainted=0;
+		var numOfBat=0;
+		var numOfSrc=0;
+		var numOfInv=0;
+		var numOfBypas=0;	
+		var src_data= new Array(16);
+		var isPainted=0;
+	  
+	  	$( function() {
+			console.log("Страница загружена");
+	  	} );
+
+		function isCheck(name) {
+			var a="name='radio_input_2'";
+		     output=$('input[name="' + name + '"]:checked').val();
+		     return output;
+		}
+
+		function pswrdEntry(input) {
+			$.post("but.cgx",{ parol: input },function(){console.log("Пришел ответ на пароль")});
+			console.log("Отправлен пароль");
+		}
+		function dataUpdate(){
+			var data = {};
+			$.getJSON( "bww.cgx", data, success );
+		}
+		function button_enter_press(input) {
+			var mainSelector=set_dict[input][4];
+			var parametrSet="";
+			var inp;
+			var inpSelector;
+			var mult=set_dict[input][3];
+
+			if(mainSelector=="INTINPUT"){
+				inpSelector="#text_input_"+input;
+				inp=$(inpSelector).val();
+				parametrSet=inp;
+				if(mult=="INT/10")parametrSet=inp*10;
+				else if(mult=="INT/100")parametrSet=inp*100;
+				else if(mult=="INT/1000")parametrSet=inp*1000;
+			}
+			else if(mainSelector=="STRINGINPUT"){
+				inpSelector="#text_input_"+input;
+				inp=$(inpSelector).val();
+				parametrSet=pal_cyr_coder(inp);
+			}
+			else if(mainSelector=="RADIOINPUT"){
+				inpSelector="radio_input_" + input;
+				inp=isCheck(inpSelector);
+				parametrSet=inp;
+			}
+
+			
+			/*var xxx=pal_cyr_coder(input2);*/
+			$.post("but.cgx",{ param: set_dict[input][7], value: parametrSet},function(){console.log("Пришел ответ на пароль")});
+			console.log("Отправлен параметр");
+			
+		}
+
+		function controlGenerator(num) {
+			var output="";
+			if(set_dict[num][4]=="INCDEC") {
+				/*output = 	'<input value="-' + num + '" type="button" onclick="buttonPressing()" class = "btn">';
+				output += 	'<input value="+' + num + '" type="button" onclick="alert(\'Клик+!\')" class = "btn">';*/
+				output = 	'<button id="but' + num +'mi" style="width:50px"  value="-' + num + '" type="button" onclick="buttonPressing(this.id)" class = "btn"> - </button>';
+				output += 	'<button id="but' + num +'pl" style="width:50px"  value="+' + num + '" type="button" onclick="buttonPressing(this.id,this.value)" class = "btn"> + </button>';
+			}
+			else if(set_dict[num][4]=="INTINPUT") {
+				var mmult =1;
+				if(set_dict[num][3]=="INT/10")mmult =10;
+				output +=	'<input id="text_input_' + num + '" type="text" size="42" class="digitInput">';
+				output += 	'<button id="but_enter_' + num + '" style="width:40px margin: 0 10px" onclick="button_enter_press(' + num + ')">Ввести</button>';/*,' + mmult + '*/
+			}
+			else if(set_dict[num][4]=="STRINGINPUT") {
+				output +=	'<input id="text_input_' + num + '" type="text" size="42" class="textInput">';
+				output += 	'<button id="but_enter_' + num + '" style="width:50px margin: 0 10px" onclick="button_enter_press(' + num + ')">Ввести</button>';
+			}
+			else if(set_dict[num][4]=="RADIOINPUT") {
+				numOfButtons = set_dict[num][6].length;
+				for(var i=0; i<numOfButtons;i++){
+					output +=	'<span><input name="radio_input_' + num + '" type="radio" value="' + i +'"> ' + set_dict[num][6][i]+'</span>';
+				}
+				output += 	'<button id="but_enter_' + num + '" style="width:50px margin: 0 10px" onclick="button_enter_press(' + num + ')">Ввести</button>';
+			}
+			else if(set_dict[num][4]=="EXECBUTTON") {
+				output += 	'<button id="but_enter_' + num + '" style="width:50px margin: 0 10px" onclick="button_enter_press(' + num + ')">Выполнить</button>';
+			}
+			else if(set_dict[num][4]=="NOCONTROL") {
+				output += 	'';
+			}
+			return output;
+		}
+
+	 	function success ( inputData ) {
+			document.getElementById("dev_name").innerHTML=palDecoder(inputData.model);
+			document.getElementById("dev_serial").innerHTML="S№"+palDecoder(inputData.serial);
+			document.getElementById("dev_place").innerHTML=palDecoder(inputData.place);
+
+ {
+
+				var div = document.getElementsByClassName("alert");
+				if(div[0]) div[0].parentNode.removeChild(div[0]);
+				
+
+				var numOfBWWSk = inputData.innumber ;/*set_dict.length-1;*/
+				var set = new Array(100);
+				set[0] = inputData.bdwsk1Tm; 
+				set[1] = inputData.bdwsk2Tm;
+				set[2] = inputData.bdwsk3Tm;
+				set[3] = inputData.bdwsk4Tm;
+				set[4] = inputData.bdwsk5Tm;
+				set[5] = inputData.bdwsk6Tm; 
+				set[6] = inputData.bdwsk7Tm; 
+				set[7] = inputData.bdwsk8Tm; 
+				set[8] = inputData.bdwsk9Tm;  
+				set[9] = inputData.bdwsk10Tm;
+				set[10] = inputData.bdwsk11Tm; 
+				set[11] = inputData.bdwsk12Tm;
+				set[12] = inputData.bdwsk13Tm;
+				set[13] = inputData.bdwsk14Tm;
+				set[14] = inputData.bdwsk15Tm;
+				set[15] = inputData.bdwsk16Tm; 
+				set[16] = inputData.bdwsk17Tm; 
+				set[17] = inputData.bdwsk18Tm; 
+				set[18] = inputData.bdwsk19Tm;  
+				set[19] = inputData.bdwsk20Tm;
+				set[20] = inputData.bdwsk21Tm; 
+				set[21] = inputData.bdwsk22Tm;
+				set[22] = inputData.bdwsk23Tm;
+				set[23] = inputData.bdwsk24Tm;
+				set[24] = inputData.bdwsk25Tm;
+				set[25] = inputData.bdwsk26Tm; 
+				set[26] = inputData.bdwsk27Tm; 
+				set[27] = inputData.bdwsk28Tm; 
+				set[28] = inputData.bdwsk29Tm;  
+				set[29] = inputData.bdwsk30Tm;
+				set[30] = inputData.bdwsk31Tm; 
+				set[31] = inputData.bdwsk32Tm;
+				set[32] = inputData.bdwsk33Tm;
+				set[33] = inputData.bdwsk34Tm;
+				set[34] = inputData.bdwsk35Tm;
+				set[35] = inputData.bdwsk36Tm; 
+				set[36] = inputData.bdwsk37Tm; 
+				set[37] = inputData.bdwsk38Tm; 
+				set[38] = inputData.bdwsk39Tm;  
+				set[39] = inputData.bdwsk40Tm;
+				set[40] = inputData.bdwsk41Tm; 
+				set[41] = inputData.bdwsk42Tm;
+				set[42] = inputData.bdwsk43Tm;
+				set[43] = inputData.bdwsk44Tm;
+				set[44] = inputData.bdwsk45Tm;
+				set[45] = inputData.bdwsk46Tm; 
+				set[46] = inputData.bdwsk47Tm; 
+				set[47] = inputData.bdwsk48Tm; 
+				set[48] = inputData.bdwsk49Tm;  
+				set[49] = inputData.bdwsk50Tm;
+				set[50] = inputData.bdwsk51Tm; 
+				set[51] = inputData.bdwsk52Tm;
+				set[52] = inputData.bdwsk53Tm;
+				set[53] = inputData.bdwsk54Tm;
+				set[54] = inputData.bdwsk55Tm;
+				set[55] = inputData.bdwsk56Tm; 
+				set[56] = inputData.bdwsk57Tm; 
+				set[57] = inputData.bdwsk58Tm; 
+				set[58] = inputData.bdwsk59Tm;  
+				set[59] = inputData.bdwsk60Tm;
+				set[60] = inputData.bdwsk61Tm; 
+				set[61] = inputData.bdwsk62Tm;
+				set[62] = inputData.bdwsk63Tm;
+				set[63] = inputData.bdwsk64Tm;
+
+		  
+
+				  
+				console.log("Данные получены");
+
+			  	if(isPainted==0) {
+			  		$("#setTable").remove(); 
+					var myTable = '' ;
+					myTable += '<table id="BWWTable" width="100%" style="table-layout: fixed" cellspacing=0 cellpadding=2 border=1>' ;
+					myTable += '<col width="300" valign="middle" align="left">' ;
+			   		myTable += '<col /*width="30%" */valign="middle" text-align="right" class = "abc" align="justify">' ;
+			   		/*myTable += '<col width="70%" valign="middle" align="justify">' ;*/
+					myTable +=  "<thead>" ;
+					myTable +=   "<tr>";
+					myTable +=    "<th>"     + "Вход" +       "</th>";
+					myTable +=    "<th>"     + "Состояние" +       "</th>";
+					myTable +=   "</tr>" ;
+					myTable +=  "</thead>" ;
+					myTable +=  "<tbody>" ;
+
+					for (var i = 0; i < numOfBWWSk; i++) {
+						var numOfParam= i+1;
+						var nameOfParam="DI"+numOfParam;
+						var valueOfParam;
+						if(set[i]==0)valueOfParam="Пассивен";
+						else valueOfParam="Активен";
+						
+							myTable += '<tr>';
+						    myTable += '<td class="centerAligned">';
+						    myTable += nameOfParam;
+						    myTable += "</td>";
+						    myTable += '<td class="centerAligned" id = "data'+i+'">';
+						   	myTable += valueOfParam;
+						    myTable += "</td>";
+						    myTable += "</tr>";
+
+						}
+					
+					myTable +=  "</tbody>" ;
+					myTable += "</table>" ;
+
+					isPainted=1;
+				}
+				else {
+					for (var i = 0; i < numOfBWWSk; i++) {
+						var valueOfParam;
+						if(set[i]==0)valueOfParam="Пассивен";
+						else valueOfParam="Активен";
+						var idFild="#data"+i;
+						$(idFild).text(valueOfParam);
+					}
+				}
+				$("#result").append(myTable) ;	
+		    }
+
+	    }
+		
+		setInterval(dataUpdate,500);
+	</script>	
+</head>
+<body>
+<div id="wrap">
+	<div id="dev_header">
+		<div id="dev_name"> </div>
+		<div id="dev_place"> </div>
+		<div id="dev_serial"> </div>
+	</div>
+
+	<div id="main">
+		<div id= "result"></div>
+	</div>
+	<div id="sidebar">
+		<ul>
+			<li><a href="index.htm">Главная</a></li>
+			<li><a href="set.html">Установки</a></li>
+			<li><a href="log.html">Журнал событий</a></li>
+			<li><a href="bww.html">Блок внешних вводов</a></li>
+		</ul>
+	</div>
+
+</div>
+<div id="footer">
+
+</div>
+</body></html>

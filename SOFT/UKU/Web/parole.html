@@ -1,0 +1,253 @@
+<!DOCTYPE html >
+<html lang="ru">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Ввод пароля</title>
+	<style type="text/css" media="screen, print, projection">
+	body,
+	html {
+		margin:0;
+		padding:0;
+		color:#000;
+		background:#a7a09a;
+		height: 100%;
+	}
+	#wrap {
+		width:750px;
+		margin:0 auto;
+		background:#99c;
+	}
+	#nav ul {
+		margin:0;
+		padding:0;
+		list-style:none;
+    }
+    #nav li {
+		display:inline;
+		margin:0;
+		padding:0;
+    }
+	#header {
+		padding:5px 10px;
+		background:#ddd;
+    }
+    h1 {
+		margin:0;
+    }
+    #nav {
+		padding:5px 10px;
+		background:#c99;
+    }
+    #main {
+		float:left;
+		width:480px;
+		padding:10px;
+		background:#9c9;
+		min-height: 100%;
+    }
+    h2 {
+		margin:0 0 1em;
+    }
+    #sidebar {
+		float:right;
+		width:230px;
+		padding:10px;
+		background:#99c;
+    }
+    #footer {
+		clear:both;
+		padding:5px 10px;
+		background:#cc9;
+    }
+    #footer p {
+		margin:0;
+    }
+
+    #spa_adress {
+
+    }
+    
+	* html #footer {
+		height:1px;
+    }
+
+    .centerAligned {
+    text-align: center;
+    /*border: 1px solid blue;*/
+  }
+
+	</style>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+	<script>
+
+		var logTblIsPainted=0;
+		var logTblIsFilled=0;
+		var log_data= new Array(64);
+		var palDict = {
+			A : "А",
+			B : "Б",
+			C : "Ц",
+			D : "Д",
+			E : "Е",
+			F : "Ф",
+			G : "Г",
+			H : "Х",
+			I : "И",
+			J : "Й",
+			K : "К",
+			L : "Л",
+			M : "М",
+			N : "Н",
+			O : "О",
+			P : "П",
+			Q : "Я",
+			R : "Р",
+			S : "С",
+			T : "Т",
+			U : "У",
+			V : "Ю",
+			W : "В",
+			XA : "Ш",
+			Y : "Ч",
+			Z : "З",
+			XE : "Ё",
+			XC : "Ж",
+			XD : "Щ",
+			XB : "Ъ",
+			XF : "Ы",
+			XG : "Ь",
+			XH : "Э",
+			a : "а",
+			b : "б",
+			c : "ц",
+			d : "д",
+			e : "е",
+			f : "ф",
+			g : "г",
+			h : "х",
+			i : "и",
+			j : "й",
+			k : "к",
+			l : "л",
+			m : "м",
+			n : "н",
+			o : "о",
+			p : "п",
+			q : "я",
+			r : "р",
+			s : "с",
+			t : "т",
+			u : "у",
+			v : "ю",
+			w : "в",
+			Xa : "ш",
+			y : "ч",
+			z : "з",
+			Xe : "ё",
+			Xc : "ж",
+			Xd : "щ",
+			Xb : "ъ",
+			Xf : "ы",
+			Xg : "ь",
+			Xh : "э",
+			Xi : "°",
+			Xj : "№"
+
+		};
+	  
+	  	$( function() {
+			console.log("Страница загружена");
+	  	} );
+
+		function dataUpdate(num){
+			var data = {"num" : num};
+			$.getJSON( "log.cgx", data, success );
+		}
+		
+		function palDecoder(input) {
+			var output = "",i=0;
+	        while (input[i]){
+	        	if(input[i]=='^'){
+	        		if(input[++i]=='X'){
+	        			output+=palDict[input[i]+input[i+1]];
+	        			i++;
+	        			i++;
+	        		}
+	        		else {output += palDict[input[i]];
+	        		i++;
+	        		}
+	        	}
+	        	else {
+	        		output +=input[i++];
+	        	}
+	        }
+	        return output;
+		}
+
+	 	function success ( inputData ) {
+	 		deepOfLog=inputData.logDeep;
+			numOfLogItem=inputData.itemNumber;
+			/*productModel=inputData.model;*/
+			/*document.getElementById("header").innerHTML=palDecoder(productModel);*/
+
+			if(deepOfLog) {
+				for(var i=0; i<deepOfLog; i++) {
+					log_data[numOfLogItem] = inputData.logItem.split("><");
+				}
+				if(numOfLogItem<deepOfLog-1)setTimeout(dataUpdate,500);
+			}
+
+
+			
+
+	</script>	
+</head>
+<body>
+<div id="wrap">
+	<div id="header"><h1>Простой 2-х колоночный шаблон CSS. Готово</h1></div>
+	<div id="nav">
+		<ul>
+			<li><a href="http://ruseller.com">Опция 1</a></li>
+			<li><a href="http://ruseller.com">Опция 2</a></li>
+			<li><a href="http://ruseller.com">Опция 3</a></li>
+			<li><a href="http://ruseller.com">Опция 4</a></li>
+			<li><a href="http://ruseller.com">Опция 5</a></li>
+		</ul>
+	</div>
+	<div id="main">
+		<h2 align = "middle">Для входа в меню установок необходимо ввести пароль</h2>
+		<div id= "result">
+			<form method="post" >
+			    <table>
+			        <tr>
+			            <td><label for="passwordField">Пароль</label></td>
+			            <td><input id="passwordField" type="password" name="password"></td>
+			        </tr>
+			        <tr>
+			            <td colspan="2" style="text-align: center"><input type="submit" value="Войти"></td>
+			        </tr>
+			    </table>
+			</form>
+		</div>
+		<p><a href="http://ruseller.com" target="_blank">RUSELLER.COM</a></p>
+		
+		
+		<h3>Consectetuer adipiscing elit</h3>
+
+
+	</div>
+	<div id="sidebar">
+		<ul>
+			<li><a href="uku.html">Главная</a></li>
+			<li><a href="http://ruseller.com">Установки</a></li>
+			<li><a href="log.html">Журнал событий</a></li>
+		</ul>
+	</div>
+	<div id="footer">
+		<center><p id = "spa_adress"><a href="http://vorpostnsk.ru">"Системы промавтоматики"</a></p></center>
+	</div>
+</div>
+
+</body></html>
