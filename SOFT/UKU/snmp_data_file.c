@@ -54,6 +54,10 @@ signed short snmp_bat_cell1_voltage, snmp_bat_cell2_voltage, snmp_bat_cell3_volt
 signed short snmp_bat_cell1_imbalance, snmp_bat_cell2_imbalance, snmp_bat_cell3_imbalance, snmp_bat_cell4_imbalance, snmp_bat_cell5_imbalance;
 signed short snmp_bat_cell1_imbalance_stat, snmp_bat_cell2_imbalance_stat, snmp_bat_cell3_imbalance_stat, snmp_bat_cell4_imbalance_stat, snmp_bat_cell5_imbalance_stat;
 
+//Состояние датчика внешней температуры
+signed short snmp_ext_temper;
+signed short snmp_ext_temper_sensor_invalid;
+
 //Состояние предохранителей
 signed short snmp_fuse_av_stat[3];
 signed short snmp_fuse_number[3];
@@ -148,7 +152,8 @@ if(St&0x01)snmp_mains_power_alarm=1;
 
 snmp_load_voltage=Uload;
 snmp_load_current=iload;
-snmp_numofbps=2;
+snmp_numofbps=NUMIST;
+snmp_numofbat=NUMBAT;
 
 snmp_numofevents=lc640_read_int(CNT_EVENT_LOG);
 
@@ -161,11 +166,18 @@ snmp_sernum_lsb=0x1122;
 snmp_sernum_msb=0x3344;
 snmp_device_code=AUSW_MAIN;
 
+memcpy(snmp_model,"undefined       ",20);
+if(AUSW_MAIN==4806)	memcpy(snmp_model,"IBEP220/48V-6A-1U",20);
+if(AUSW_MAIN==4812)	memcpy(snmp_model,"IBEP220/48V-12A-1U",20);
+if(AUSW_MAIN==6006)	memcpy(snmp_model,"IBEP220/60V-6A-1U",20);
+if(AUSW_MAIN==6012)	memcpy(snmp_model,"IBEP220/60V-12A-1U",20);
+
 //memcpy(snmp_location,"lkhg;la",);
 
 
-snmp_numofbat=1;
-
+snmp_ext_temper=tout[0];
+snmp_ext_temper_sensor_invalid=0;
+if(ND_out[0])snmp_ext_temper_sensor_invalid=1;
 
 
 snmp_bps_number[0]=1;
@@ -1321,10 +1333,10 @@ for(snmp_trap_send_i=0;snmp_trap_send_i<100;snmp_trap_send_i++)
 	snmp_spc_trap_message[snmp_trap_send_i]=0;
 	} */
 
-mem_copy(snmp_spc_trap_message,"                                                  ",50);
-mem_copy(snmp_spc_trap_message,str,50);
+mem_copy(snmp_spc_trap_message,"                                                                                                   ",100);
+mem_copy(snmp_spc_trap_message,str,100);
 
-obj[0]=4;
+obj[0]=2;
 obj[1]=0;
 obj[2]=1;
 obj[3]=2;

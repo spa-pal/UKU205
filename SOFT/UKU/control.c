@@ -695,12 +695,12 @@ void ext_drv(void)
 char i;
 for (i=0;i<1;i++)
 	{
-	if(tout[i]>TMAX_EXT[i])
+	if((tout[i]>TMAX_EXT[i])&&(!ND_out[i]))
 		{
-		if(tout_max_cnt[i]<10)
+		if(tout_max_cnt[i]<120)
 			{
 			tout_max_cnt[i]++;
-			if((tout_max_cnt[i]>=10)&&(!TMAX_EXT_EN[i])&&(!ND_out[i]))
+			if((tout_max_cnt[i]>=120)&&(!TMAX_EXT_EN[i]))
 				{
 				tout_stat[i]=tMAX;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,1,tout[i]);
@@ -714,9 +714,9 @@ for (i=0;i<1;i++)
 				if(!T_EXT_ZVUK_EN[i])av_beep|=(1<<(8+i));
 				}
 			}
-		else if(tout_max_cnt[i]>10)tout_max_cnt[i]=5;	
+		else if(tout_max_cnt[i]>120)tout_max_cnt[i]=120;	
 		}
-	else 
+	else if((tout[i]<TMAX_EXT[i])&&(!ND_out[i]))
 		{
 		if(tout_max_cnt[i]>0)
 			{
@@ -738,15 +738,15 @@ for (i=0;i<1;i++)
 					}			
 				}
 			}
-		else if(tout_max_cnt[i]<0) tout_max_cnt[i]=5;			
+		else if(tout_max_cnt[i]<0) tout_max_cnt[i]=0;			
 		}	
 		
 	if(tout[i]<TMIN_EXT[i])
 		{
-		if(tout_min_cnt[i]<10)
+		if(tout_min_cnt[i]<120)
 			{
 			tout_min_cnt[i]++;
-			if((tout_min_cnt[i]>=10)&&(!TMIN_EXT_EN[i]))
+			if((tout_min_cnt[i]>=120)&&(!TMIN_EXT_EN[i]))
 				{
 				tout_stat[i]=tMIN;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,2,tout[i]);
@@ -760,7 +760,7 @@ for (i=0;i<1;i++)
 				if(!T_EXT_ZVUK_EN[i])av_beep|=(1<<(8+i));
 				}
 			}
-		else if(tout_min_cnt[i]>10)tout_min_cnt[i]=5;	
+		else if(tout_min_cnt[i]>120)tout_min_cnt[i]=120;	
 		}
 	else 
 		{
@@ -785,7 +785,7 @@ for (i=0;i<1;i++)
 					}
 				}
 			}
-		else if(tout_min_cnt[i]<0) tout_min_cnt[i]=5;			
+		else if(tout_min_cnt[i]<0) tout_min_cnt[i]=0;			
 		}			
 	}
 
@@ -936,7 +936,7 @@ else if(cnt_irazr<=5)
 	bIOFF=0;
 	} 
 	
-if(UBM_AV)
+if((UBM_AV)&&(NUMBAT)&&(!(St&0x02)))
 	{
 	signed short ubat_avg;
 	signed short ubat_avg_up;
@@ -1237,6 +1237,37 @@ temp_SL/=20000L;
 temp_SL-=273L;
 t_i[1]=(signed short)temp_SL;
 
+if((adc_buff_[14]>800)&&(adc_buff_[14]<3800))
+	{
+	ndb_cnt--;
+	if(ndb_cnt<=0)
+		{
+		ndb_cnt=0;
+		NDB=0;
+		}
+	}
+else 
+	{
+	ndb_cnt++;
+	if(ndb_cnt>=150)
+		{
+		ndb_cnt=150;
+		NDB=0xff;
+		}	
+	}
+
+if(NDB!=NDB_old)
+	{
+	if(NDB==0)
+		{
+		snmp_trap_send("Battery temperature sensor is OK",2,2,2);
+		}
+	else 
+		{
+		snmp_trap_send("Battery temperature sensor defective",2,2,2);
+		}
+	}
+NDB_old=NDB;
 
 if((adc_buff_[14]>800)&&(adc_buff_[14]<3800))NDB=0;
 else NDB=0xff;
@@ -1246,9 +1277,38 @@ temp_SL/=20000L;
 temp_SL-=273L;
 t_b=(signed short)temp_SL;
 
+//adc_buff_[13]=1200;
+if((adc_buff_[13]>800)&&(adc_buff_[13]<3800))
+	{
+	nd_out_cnt[0]--;
+	if(nd_out_cnt[0]<=0)
+		{
+		nd_out_cnt[0]=0;
+		ND_out[0]=0;
+		}
+	}
+else 
+	{
+	nd_out_cnt[0]++;
+	if(nd_out_cnt[0]>=25)
+		{
+		nd_out_cnt[0]=25;
+		ND_out[0]=0xff;
+		}	
+	}
 
-if((adc_buff_[13]>800)&&(adc_buff_[13]<3800))ND_out[0]=0;
-else ND_out[0]=0xff;
+if(ND_out[0]!=ND_out_old[0])
+	{
+	if(ND_out[0]==0)
+		{
+		snmp_trap_send("External temperature sensor is OK",2,2,2);
+		}
+	else 
+		{
+		snmp_trap_send("External temperature sensor defective",2,2,2);
+		}
+	}
+ND_out_old[0]=ND_out[0];
 
 temp_SL=(signed long)adc_buff_[13];
 temp_SL*=Ktout[0];
@@ -1855,8 +1915,40 @@ else if(Unet>UMN)
 			}
 		}
 	}
-}
 
+
+if((Unet>UMAXN)&&(main_cnt>5))
+	{
+	if(unet_max_drv_cnt<AVAR_UNET_ON)
+		{
+		unet_max_drv_cnt++;
+		if(unet_max_drv_cnt>=AVAR_UNET_ON)
+			{
+			net_Ustore_max=Unet;
+		 	avar_unet_hndl(2);
+			
+			}
+		}
+	else if(unet_max_drv_cnt>=AVAR_UNET_ON)unet_max_drv_cnt=AVAR_UNET_ON;
+
+	if(Unet>net_Ustore_max) net_Ustore_max=Unet; 	
+	}
+
+else if(Unet<UMAXN) 
+	{                 
+	if(unet_max_drv_cnt)
+		{
+		unet_max_drv_cnt--;
+		if(unet_max_drv_cnt<=0)
+			{
+			avar_unet_hndl(4); 
+			//avar_bps_reset_cnt=10;
+			}
+		}
+	else if(unet_max_drv_cnt<0)unet_max_drv_cnt=0;
+	
+	}
+}
 //-----------------------------------------------
 void src_drv(char in)
 {        

@@ -121,7 +121,7 @@
 #define DISPLAY_PSU_ENTRY_STATUS			1,5
 
 #define DISPLAY_BAT					5
-#define DISPLAY_BAT_ENTRY_NUMBER			1,1
+//#define DISPLAY_BAT_ENTRY_NUMBER			1,1
 #define DISPLAY_BAT_ENTRY_VOLTAGE			1,2
 #define DISPLAY_BAT_ENTRY_CURRENT			1,3
 #define DISPLAY_BAT_ENTRY_TEMPERATURE		1,4
@@ -148,7 +148,6 @@
 #define DISPLAY_SPEC_STAT				1
 #define DISPLAY_SPEC_TRAP_MESSAGE			4
 #define DISPLAY_SPEC_TRAP_VALUE 			5
-
 
 #define LCD_SIZE 200
 
@@ -203,10 +202,14 @@
 #define DISPLAY_LOG_ENTRY_EVENTS 			1,1
 //#define DISPLAY_LOG_ENTRY_EVENTS 			1,1
 
+/*
 #define DISPLAY_SPEC_TRAP_MESSAGE			5
 #define DISPLAY_SPEC_TRAP_VALUE_0			6
 #define DISPLAY_SPEC_TRAP_VALUE_1			7
-#define DISPLAY_SPEC_TRAP_VALUE_2			8
+#define DISPLAY_SPEC_TRAP_VALUE_2			8*/
+
+#define DISPLAY_EXT_TEMPER					16,1
+#define DISPLAY_EXT_TEMPER_SENSOR_INVALID	16,2
 
 #define SPA_OID	130, 131, 31,
 
@@ -230,11 +233,13 @@ extern signed short adc_result;
 
 //-----------------------------------------------
 //Состояние сети
-extern short Hz_cnt,fnet,Hz_out;
+extern short Hz_cnt, fnet, Hz_out;
 extern char bFF,bFF_;
 extern signed short Unet;
 extern char unet_drv_cnt;
-extern signed short unet_store;
+extern char unet_max_drv_cnt;
+extern signed short unet_store, net_Ustore_max;
+extern char net_av;
 
 //-----------------------------------------------
 //Индикация
@@ -462,7 +467,8 @@ extern char bUOFF,bIOFF;
 extern char cnt_irazr;
 extern char bIrazr;
 extern char bI;
-extern char NDB;
+extern char NDB, NDB_old;
+extern short ndb_cnt;
 extern signed short ubat_old[8];
 extern signed short ubat_old_cnt;
 extern char cnt_bat;					//счетчик задержки отключения контактора батареи
@@ -487,8 +493,9 @@ extern enum_tout_stat tout_stat[3];
 extern char in_stat_out_old[4];
 typedef enum {skON=0x55,skOFF=0xaa}enum_sk_stat;
 extern enum_sk_stat sk_stat[4];
-extern char ND_out[3];
+extern char ND_out[3],ND_out_old[3];
 extern char in_stat_out[4];
+extern short nd_out_cnt[3];
 
 //-----------------------------------------------
 //Кнопки
@@ -542,6 +549,7 @@ extern char uart_plazma;
 extern char plazma_can,plazma_can1,plazma_can2,plazma_can3,plazma_can4;
 extern short snmp_plazma;
 extern char web_plazma[5];
+extern char plazma_trap[5];
 
 //-----------------------------------------------
 //Имя устройства

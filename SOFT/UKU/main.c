@@ -54,11 +54,13 @@ char adc_self_ch_cnt;
 signed short adc_result;
 //-----------------------------------------------
 //Состояние сети
-short Hz_cnt,fnet,Hz_out;
+short Hz_cnt, fnet, Hz_out;
 char bFF,bFF_;
 signed short Unet;
 char unet_drv_cnt;
-signed short unet_store;
+char unet_max_drv_cnt;
+signed short unet_store, net_Ustore_max;
+char net_av;
 
 //-----------------------------------------------
 //Индикация
@@ -256,7 +258,8 @@ char bUOFF,bIOFF;
 char cnt_irazr;
 char bIrazr; 
 char bI;
-char NDB;
+char NDB,NDB_old;
+short ndb_cnt;
 signed short ubat_old[8];
 signed short ubat_old_cnt;
 char cnt_bat;					//счетчик задержки отключения контактора батареи
@@ -278,8 +281,9 @@ char tout_max_cnt[3],tout_min_cnt[3];
 enum_tout_stat tout_stat[3];
 char in_stat_out_old[4];
 enum_sk_stat sk_stat[4]={skOFF,skOFF};
-char ND_out[3];
+char ND_out[3],ND_out_old[3];
 char in_stat_out[4];
+short nd_out_cnt[3];
 
 //-----------------------------------------------
 //Кнопки
@@ -321,7 +325,7 @@ char cnt_ind;
 //WEB-интерфейс
 char uku_set_autorized=0;
 long web_param_input;
-char place_holder[70]="Новосибирск.Новолуговое";
+char place_holder[70]="яяяяяяяяяяяяяяяяяяяяяяяя";
 short web_cnt_main;
 short web_cnt_2hz;
 
@@ -329,13 +333,13 @@ short web_cnt_2hz;
 //Отладка
 unsigned short rotor_can[6];
 unsigned short cnt_sec;
-char plazma_suzun;
+//char plazma_suzun;
 char rele_temp;
 char uart_plazma;
-char plazma_can,plazma_can1,plazma_can2,plazma_can3,plazma_can4;
+//char plazma_can,plazma_can1,plazma_can2,plazma_can3,plazma_can4;
 short snmp_plazma;
-char web_plazma[5];
-
+//char web_plazma[5];
+char plazma_trap[5];
 
 //-----------------------------------------------
 //Имя устройства
@@ -688,8 +692,13 @@ if(St_[1]&0x1c)
 	sub_ptrs[i++]=" Авария источника N2";
 	sub_cnt_max++;	
 	}	
-		
-if((tout_stat[0]==tMAX)&&(!T_EXT_LCD_EN[0]))
+
+if(ND_out[0])
+	{
+	sub_ptrs[i++]="  ДТ N1 неисправен  ";
+	sub_cnt_max++;	
+	}		
+else if((tout_stat[0]==tMAX)&&(!T_EXT_LCD_EN[0]))
 	{
 	sub_ptrs[i++]="Внеш.темп.N1завышена";
 	sub_cnt_max++;	
@@ -1214,10 +1223,10 @@ else if(ind==iMn)
 	else if(Us[1]>200)ptrs[0]="    В работе БПС2   ";
 	else if(Ubat>200)ptrs[0]="  Работа от батареи ";
 	ptrs[1]=		" Uб=   lВ Iб=    @А ";
-     ptrs[2]=		" Uн=   #В Iн=    $А ";
-     ptrs[3]=		" 0%:0^:0& 0</>  /0{ ";
-     ptrs[4]=		" Батарея            ";
-     ptrs[5]=		" БПС1               "; 
+	ptrs[2]=		" Uн=   #В Iн=    $А ";
+	ptrs[3]=		" 0%:0^:0& 0</>  /0{ ";
+	ptrs[4]=		" Батарея            ";
+	ptrs[5]=		" БПС1               "; 
 	ptrs[6]=		" БПС2               ";
      ptrs[7]=		" Нагрузка           ";
      ptrs[8]=		" Сеть               ";
@@ -1362,11 +1371,15 @@ int2lcdyx(index_set,0,1,0);*/
 	St&=0xfb; 
 	cnt_src[1]=10;*/
 
-     //int2lcdyx(av_rele,0,4,0);
+//     int2lcdyx(ND_out[0],0,4,0);
+//	 int2lcdyx(in_stat_out[1],0,7,0);
+//	 int2lcdyx(in_stat_out[2],0,10,0);
+//	 int2lcdyx(in_stat_out[3],0,13,0);
      //int2lcdyx(av_beep,0,10,0);
 	//int2lcdyx(tst_state[0],0,14,0);
      //int2lcdyx(St_[0],0,12,0);
-	int2lcdyx(modbus_tcp_plazma[0],0,18,0);
+
+	//int2lcdyx(plazma_trap[2],0,10,0);
     	} 
      
 
@@ -1735,7 +1748,7 @@ else if(ind==iLog_)
 		
 		}
 
-	else if((av_head[0]=='P')&&(av_head[2]=='A'))
+/*	else if((av_head[0]=='P')&&(av_head[2]=='A'))
 		{  
 		ptrs[0]="   Авария сети!!!   ";
 		ptrs[1]="  0%(  0^ 0@:0#:0$  ";
@@ -1773,7 +1786,87 @@ else if(ind==iLog_)
 		sub_bgnd(sm_mont[av_data_on[1]],'(',0);
 		
 		av_j_si_max=1;
+		}*/
+
+	else if((av_head[0]=='P')&&(av_head[2]=='A'))
+		{  
+		ptrs[0]="Авария сети!(заниж.)";
+		ptrs[1]="  0%f  0^ 0@:0#:0$  ";
+		if((av_data_off[0]=='A')&&(av_data_off[1]=='A'))
+			{
+			ptrs[2]="    не устранена    ";
+			ptrs[3]="     Uсети=  +В     ";
+			bgnd_par(ptrs[0],ptrs[1],ptrs[2],ptrs[3]);
+			int2lcd(Unet,'+',0);
+			}
+		else 
+			{
+			gran_char(&index_set,0,1);
+			ptrs[2]="      устранена     ";
+			ptrs[3]="  0[]  0< 0>:0=:0F  ";
+			ptrs[4]="     Uмин=  +В      ";
+			bgnd_par(ptrs[index_set],ptrs[1+index_set],ptrs[2+index_set],ptrs[3+index_set]);
+			int2lcd(av_data_off[4],'>',0);
+			int2lcd(av_data_off[5],'=',0);
+			int2lcd(av_data_off[6],'F',0);
+			int2lcd(av_data_off[2],'[',0);
+			int2lcd(av_data_off[0],'<',0); 
+			if(!((av_data_off[1]>=1)&&(av_data_off[1]<=12)))av_data_off[1]=1;
+			sub_bgnd(sm_mont[av_data_off[1]],']',0);
+			
+			int2lcd(av_data[0]+(av_data[1]*256),'+',0);			
+			}	
+		
+		int2lcd(av_data_on[4],'@',0);
+		int2lcd(av_data_on[5],'#',0);
+		int2lcd(av_data_on[6],'$',0);
+		int2lcd(av_data_on[2],'%',0);
+		int2lcd(av_data_on[0],'^',0); 
+		if(!((av_data_on[1]>=1)&&(av_data_on[1]<=12)))av_data_on[1]=1;
+		sub_bgnd(sm_mont[av_data_on[1]],'f',0);
+		
+		av_j_si_max=1;
 		}
+	else if((av_head[0]=='P')&&(av_head[2]=='B'))
+		{  
+		ptrs[0]="Авария сети!(завыш.)";
+		ptrs[1]="  0%f  0^ 0@:0#:0$  ";
+		if((av_data_off[0]=='A')&&(av_data_off[1]=='A'))
+			{
+			ptrs[2]="    не устранена    ";
+			ptrs[3]="     Uсети=  +В     ";
+			bgnd_par(ptrs[0],ptrs[1],ptrs[2],ptrs[3]);
+			int2lcd(Unet,'+',0);	 //o_10
+			}
+		else 
+			{
+			gran_char(&index_set,0,1);
+			ptrs[2]="      устранена     ";
+			ptrs[3]="  0[]  0< 0>:0=:0F  ";
+			ptrs[4]="     Uмакс=  +В     ";
+			bgnd_par(ptrs[index_set],ptrs[1+index_set],ptrs[2+index_set],ptrs[3+index_set]);
+			int2lcd(av_data_off[4],'>',0);
+			int2lcd(av_data_off[5],'=',0);
+			int2lcd(av_data_off[6],'F',0);
+			int2lcd(av_data_off[2],'[',0);
+			int2lcd(av_data_off[0],'<',0); 
+			if(!((av_data_off[1]>=1)&&(av_data_off[1]<=12)))av_data_off[1]=1;
+			sub_bgnd(sm_mont[av_data_off[1]],']',0);
+			
+			int2lcd(av_data[0]+(av_data[1]*256),'+',0);			
+			}	
+		
+		int2lcd(av_data_on[4],'@',0);
+		int2lcd(av_data_on[5],'#',0);
+		int2lcd(av_data_on[6],'$',0);
+		int2lcd(av_data_on[2],'%',0);
+		int2lcd(av_data_on[0],'^',0); 
+		if(!((av_data_on[1]>=1)&&(av_data_on[1]<=12)))av_data_on[1]=1;
+		sub_bgnd(sm_mont[av_data_on[1]],'f',0);
+		
+		av_j_si_max=1;
+		}
+
 
 	else if((av_head[0]=='B')&&(av_head[2]=='C'))
 		{  
@@ -2430,7 +2523,7 @@ else if(ind==iSet)
 
 	pointer_set(1);	
 	
-	if(index_set<17)
+	if(index_set<20)
 	     {
 	     int2lcd(MAIN_BPS+1,'<',0);
 	     if(ZV_ON)sub_bgnd(smon,'(',0);
@@ -2467,7 +2560,13 @@ else if(ind==iSet)
 	
 	long2lcd_mmm(AUSW_MAIN_NUMBER,'w',0);
 	int2lcd(MODBUS_ADRESS,'W',0); 
-	   
+	
+	
+//	int2lcdyx(St,0,3,0); 
+//	int2lcdyx(net_av,0,7,0); 
+	//int2lcdyx(MAIN_BPS,0,4,0); 
+	//int2lcdyx(lc640_read(EE_MAIN_BPS),0,10,0); 
+	//int2lcdyx(web_plazma[0],0,18,0);
 	}
 
 else if (ind==iDef)
@@ -2475,7 +2574,7 @@ else if (ind==iDef)
 	ptrs[0]=" ИБЭП220/60-12А-1/2 ";
 	ptrs[1]=" ИБЭП220/60-12А-2/2 ";
 	ptrs[2]=" ИБЭП220/48-12А-1/2 ";
-	ptrs[3]=" ИБЭП220/48-12А-2/2 ";
+	ptrs[3]=" ИБЭП220/48-12А-2/2 ";	 
 	ptrs[4]=sm_exit;
 
 	if(bFL5)ptrs[default_temp]=sm_;
@@ -2486,6 +2585,7 @@ else if (ind==iDef)
 	
 	pointer_set(1);
 	
+//	int2lcdyx(AUSW_MAIN,0,4,0);
   	} 	
 	        
 
@@ -2945,7 +3045,12 @@ else if (ind==iExt_dt)
 	
 	pointer_set(2);
 	int2lcd(sub_ind1+1,'!',0);
-	int2lcd_mmm(tout[sub_ind1],'@',0);
+	if(ND_out[sub_ind1])
+		{
+		if(bFL2)	sub_bgnd("неиспр.",'@',-4);
+		else   		sub_bgnd("       ",'@',-4);
+		}
+	else int2lcd_mmm(tout[sub_ind1],'@',0);
 	if(!TMAX_EXT_EN[sub_ind1])int2lcd_mmm(TMAX_EXT[sub_ind1],'#',0);
 	else sub_bgnd("выкл.",'#',-2);
 	if(!TMIN_EXT_EN[sub_ind1])int2lcd_mmm(TMIN_EXT[sub_ind1],'$',0);
@@ -2959,8 +3064,8 @@ else if (ind==iExt_dt)
 	if(!T_EXT_SNMP_TRAP_EN[sub_ind1])sub_bgnd("вкл.",')',-2);
 	else sub_bgnd("выкл.",')',-2);	
 	
-	//int2lcdyx(sub_ind,0,1,0);	
-	//int2lcdyx(index_set,0,3,0);
+	//int2lcdyx(tout_max_cnt[0],0,2,0);
+	//int2lcdyx(tout_min_cnt[0],0,6,0);
 	}	
 else if (ind==iExt_sk)
 	{ 
@@ -3520,7 +3625,7 @@ else if(ind==iK_t_out)
 	if(ND_out[2]&&bFL2)sub_bgnd("неисправен",'#',-5);
 	else int2lcd_mmm(tout[2],'#',0);  */
 	
-	//int2lcdyx(adc_buff_out_[0],0,4,0);
+	//int2lcdyx(adc_buff_out_[13],0,4,0);
 	//int2lcdyx(adc_buff_out_[1],0,10,0);
 	//int2lcdyx(adc_buff_out_[2],0,17,0);
 	} 
@@ -5433,24 +5538,24 @@ else if(ind==iDef)
 		if(sub_ind==0)
 			{
 			def_set(750,705,681,550,30,600,1);
-			lc640_write_int(EE_AUSW_MAIN,6012);
+			lc640_write_int(EE_AUSW_MAIN,6006);
 
 			}
 		else if(sub_ind==1)
 			{
 			def_set(750,705,681,550,30,600,2);
-			lc640_write_int(EE_AUSW_MAIN,6006);
+			lc640_write_int(EE_AUSW_MAIN,6012);
 
 			}
 		else if(sub_ind==2)
 			{
 			def_set(600,564,545,440,30,480,1);
-			lc640_write_int(EE_AUSW_MAIN,4812);
+			lc640_write_int(EE_AUSW_MAIN,4806);
 			}				
 		else if(sub_ind==3)
 			{
 			def_set(600,564,545,440,30,480,2);
-			lc640_write_int(EE_AUSW_MAIN,4806);
+			lc640_write_int(EE_AUSW_MAIN,4812);
 			}
 										
 		else if(sub_ind==SIMAXIDEF)
@@ -8902,7 +9007,7 @@ if (socket_udp != 0)
 
 while (1) 
 	{
-//     timer_poll ();
+     timer_poll ();
      main_TcpNet ();
 //	static char temp;
 	if(bRXIN0)

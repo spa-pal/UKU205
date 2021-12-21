@@ -23,49 +23,26 @@ displayBatteries  OBJECT IDENTIFIER ::= { ibep1U 5 }
 displayBatteriesMass  OBJECT IDENTIFIER ::= { displayBatteries 1 }
 displayBatteriesCell  OBJECT IDENTIFIER ::= { displayBatteries 2 }
 displaySpecials      OBJECT IDENTIFIER ::= { ibep1U 6 }
-commands             OBJECT IDENTIFIER ::= { ibep1U 7 }
-sysParams            OBJECT IDENTIFIER ::= { ibep1U 10 }
-newBranch52          OBJECT IDENTIFIER ::= { sysParams 1 }
 displayDEBUG         OBJECT IDENTIFIER ::= { ibep1U 13 }
+displayExtTemper     OBJECT IDENTIFIER ::= { ibep1U 16 }
 
-displayDeviceCode  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-only
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { displayDeviceInfo 1 }
+
 
 displayDeviceInfoSerial  OBJECT-TYPE
 	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-write
+	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
 		""
 	::= { displayDeviceInfo 2 }
 
-displayDeviceInfoSerialLSB  OBJECT-TYPE
-	SYNTAX     INTEGER
-	ACCESS     read-only
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { displayDeviceInfo 3 }
-
-displayDeviceInfoSerialMSB  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-only
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { displayDeviceInfo 4 }
 
 displayDeviceLocation  OBJECT-TYPE
 	SYNTAX     DisplayString (SIZE(69))
 	ACCESS     read-write
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"User-defined information about the location of the device. Maximum 64 Latin characters"
 	::= { displayDeviceInfo 5 }
 
 displayDeviceInfoNumOfBat  OBJECT-TYPE
@@ -73,7 +50,7 @@ displayDeviceInfoNumOfBat  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Number of batteries in the system"
 	::= { displayDeviceInfo 6 }
 
 displayDeviceInfoNumOfBps  OBJECT-TYPE
@@ -81,7 +58,7 @@ displayDeviceInfoNumOfBps  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Number of rectifiers (PSU) in the system"
 	::= { displayDeviceInfo 7 }
 
 displayDeviceInfoNumOfEvents  OBJECT-TYPE
@@ -89,12 +66,12 @@ displayDeviceInfoNumOfEvents  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		"depth of event list (max 64)"
+		"Depth of event list (max 64)"
 	::= { displayDeviceInfo 8 }
 
 displayDeviceModel  OBJECT-TYPE
 	SYNTAX     DisplayString (SIZE(30))
-	ACCESS     read-write
+	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
 		"Product model (only Latin characters)"
@@ -105,7 +82,7 @@ dipslayMainsVoltage  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Primary power supply voltage, resolution 1V"
 	::= { dipslayMains 1 }
 
 dipslayMainsFrequency  OBJECT-TYPE
@@ -113,33 +90,26 @@ dipslayMainsFrequency  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Primary power supply frequency, resolution 0.1Hz, example "499" means 49.9Hz"
 	::= { dipslayMains 2 }
 
 dipslayMainsStatus  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
+	SYNTAX     INTEGER { norm(0),alarm(1)}
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Primary power supply state"
 	::= { dipslayMains 3 }
 
 -- //
 
-dipslayMainsAlarm  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-only
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { dipslayMains 4 }
 
 displayLoadVoltage  OBJECT-TYPE
 	SYNTAX     INTEGER (0..65535)
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Load voltage, resolution 0.1V (example "123" means 12.3V)"
 	::= { displayLoad 1 }
 
 displayLoadCurrent  OBJECT-TYPE
@@ -147,7 +117,7 @@ displayLoadCurrent  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Load current, resolution 0.1A (example "123" means 12.3A)"
 	::= { displayLoad 2 }
 
 displayPSUTable  OBJECT-TYPE
@@ -155,7 +125,7 @@ displayPSUTable  OBJECT-TYPE
 	ACCESS     not-accessible
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Rectifier status table"
 	::= { ibep1U 4 }
 
 displayPSUEntry  OBJECT-TYPE
@@ -185,7 +155,7 @@ displayPSUnumber  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Rectifier serial number"
 	::= { displayPSUEntry 1 }
 
 displayPSUVoltage  OBJECT-TYPE
@@ -193,7 +163,7 @@ displayPSUVoltage  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Rectifier output voltage, resolution 0.1V (example "123" means 12.3V)"
 	::= { displayPSUEntry 2 }
 
 displayPSUCurrent  OBJECT-TYPE
@@ -201,7 +171,7 @@ displayPSUCurrent  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Rectifier output current, resolution 0.1A (example "123" means 12.3A)"
 	::= { displayPSUEntry 3 }
 
 displayPSUTemperature  OBJECT-TYPE
@@ -209,15 +179,15 @@ displayPSUTemperature  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Internal temperature of the rectifier, 1 degree Celsius resolution (example "30" means 30 degrees Celsius)"
 	::= { displayPSUEntry 4 }
 
 displayPSUStatus  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
+	SYNTAX     INTEGER { Rectifier is work(1), rectifier locked into standby(32), failure rectifier overheating(2), failure output voltage too low(4), failure output voltage too high(8)}
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"PSU status flags"
 	::= { displayPSUEntry 5 }
 
 displayBatteriesMassVoltage  OBJECT-TYPE
@@ -225,7 +195,7 @@ displayBatteriesMassVoltage  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Battery voltage, resolution 0.1V (example "123" means 12.3V)"
 	::= { displayBatteriesMass 2 }
 	
 	
@@ -235,7 +205,7 @@ displayBatteriesMassCurrent  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Battery current, resolution 0.01A (example "123" means 1.23A charge, "-123" means 1.23A discharge)"
 	::= { displayBatteriesMass 3 }
 
 displayBatteriesMassTemperature  OBJECT-TYPE
@@ -243,7 +213,7 @@ displayBatteriesMassTemperature  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Internal temperature of the battery, 1 degree Celsius resolution (example "30" means 30 degrees Celsius)"
 	::= { displayBatteriesMass 4 }
 
 displayBatteriesMassCapacity  OBJECT-TYPE
@@ -251,7 +221,7 @@ displayBatteriesMassCapacity  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Battery capacity, resolution 0.1 a * h (example "123" means 12.3 a * h )"
 	::= { displayBatteriesMass 5 }
 
 displayBatteriesMassCharge  OBJECT-TYPE
@@ -259,17 +229,17 @@ displayBatteriesMassCharge  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Battery charge, resolution 1%"
 	::= { displayBatteriesMass 6 }
 
 
 
 displayBatteriesMassStatus  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
+	SYNTAX     INTEGER {norm(0), battery is lost(1), battery cell asymmetry(2)}
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Battery status flags"
 	::= { displayBatteriesMass 7 }
 
 displayBatteriesCell1Voltage  OBJECT-TYPE
@@ -393,28 +363,13 @@ displayBatteriesCell5ImbalanceStatus  OBJECT-TYPE
 	::= { displayBatteriesCell 25 }	
 
 displaySpecialsControlByte  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
+	SYNTAX     INTEGER {Special functions off(0), capacity control(1), equalization charge(10)}
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		""
+		"Special function status"
 	::= { displaySpecials 1 }
 
-displaySpecialsSpecFunctions  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-only
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { displaySpecials 2 }
-
-displayDeviceType  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-only
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { displaySpecials 3 }
 
 displaySpecialsTrapMessage  OBJECT-TYPE
 	SYNTAX     DisplayString (SIZE(0..30))
@@ -432,85 +387,7 @@ displaySpecialsTrapValue  OBJECT-TYPE
 		""
 	::= { displaySpecials 5 }
 
-displaySpecialsCapacityControl  OBJECT-TYPE
-	SYNTAX     INTEGER
-	ACCESS     read-write
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { displaySpecials 6 }
 
-displaySpecialsCompensationCharge  OBJECT-TYPE
-	SYNTAX     INTEGER
-	ACCESS     read-write
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { displaySpecials 7 }
-
-sendCommand  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-write
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { commands 1 }
-
-commandParameter  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-write
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { commands 2 }
-
-commandID  OBJECT-TYPE
-	SYNTAX     INTEGER (0..65535)
-	ACCESS     read-write
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { commands 3 }
-
-ibep1UTable  OBJECT-TYPE
-	SYNTAX SEQUENCE OF Ibep1UEntry
-	ACCESS     not-accessible
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { ibep1U 8 }
-
-ibep1UEntry  OBJECT-TYPE
-	SYNTAX 	Ibep1UEntry
-	ACCESS     not-accessible
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	INDEX { ibep1U06 }
-	::= { ibep1UTable 1 }
-
-Ibep1UEntry ::= SEQUENCE {
-	ibep1U06
-		INTEGER,
-	ibep1U07
-		INTEGER
-}
-
-ibep1U06  OBJECT-TYPE
-	SYNTAX     INTEGER
-	ACCESS     read-only
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { ibep1UEntry 1 }
-
-ibep1U07  OBJECT-TYPE
-	SYNTAX     INTEGER
-	ACCESS     read-only
-	STATUS     mandatory
-	DESCRIPTION 
-		""
-	::= { ibep1UEntry 2 }
 
 displayEventsTable  OBJECT-TYPE
 	SYNTAX SEQUENCE OF DisplayEventsEntry
@@ -619,7 +496,7 @@ displayFuseNumber  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		"Number of Fuses"
+		"Number of Fuse"
 	::= { displayFuseEntry 1 }
 
 displayFuseState  OBJECT-TYPE
@@ -627,7 +504,7 @@ displayFuseState  OBJECT-TYPE
 	ACCESS     read-only
 	STATUS     mandatory
 	DESCRIPTION 
-		"State of Fuses"
+		"State of Fuse"
 	::= { displayFuseEntry 2 }	
 
 displayLogicalInputTable  OBJECT-TYPE
@@ -670,23 +547,22 @@ displayLogicalInputState  OBJECT-TYPE
 		"Alarm state of logical input"
 	::= { displayLogicalInputEntry 2 }	
 
-messageTrap  TRAP-TYPE
-	ENTERPRISE entSPA-SIB
-	VARIABLES { displaySpecialsTrapMessage }
+displayExtTemperature  OBJECT-TYPE
+	SYNTAX     INTEGER (0..65535)
+	ACCESS     read-write
+	STATUS     mandatory
 	DESCRIPTION 
-		"Simple Message Trap"
-	::= 1
+		"Outside temperature sensor reading"
+	::= { displayExtTemper 1 }
 
-informationTrap  TRAP-TYPE
-	ENTERPRISE entSPA-SIB
-	VARIABLES { displaySpecialsTrapMessage, 
-		displaySpecialsTrapValue }
+displayExtTemperatureSensorInvalid  OBJECT-TYPE
+	SYNTAX     INTEGER (0..65535)
+	ACCESS     read-write
+	STATUS     mandatory
 	DESCRIPTION 
-		"This is the information trap
-		Messages are
-		Alarm serial connection
-		Stop alarm serial connection"
-	::= 2
+		"Outside temperature sensor malfunction (1 - faulty)"
+	::= { displayExtTemper 2 }
+
 
 alarmTrap  TRAP-TYPE
 	ENTERPRISE entSPA-SIB
@@ -703,8 +579,8 @@ alarmTrap  TRAP-TYPE
 		Alarm Fuse #1 broken
 		Alarm Fuse #2 broken
 		Alarm Fuse #3 broken
-		PSU #1 alarm, disabled
-		PSU #2 alarm, disabled
+		Alarm, PSU #1 disabled
+		Alarm, PSU #2 disabled
 		PSU #1 alarm cleared
 		PSU #2 alarm cleared
 		SK #1 is on
@@ -726,10 +602,11 @@ alarmTrap  TRAP-TYPE
 		Temperature of sensor #1 is normal
 		Temperature of sensor #2 is normal
 		Temperature of sensor #3 is normal
-		Temperature of sensor #4 is normal"
+		Temperature of sensor #4 is normal
+		External temperature sensor defective
+		External temperature sensor is OK"
 	::= 3
 END
 
 
--- This MIB was created using NuDesign Team's Visual MIBuilder (Ver 4.7).
 

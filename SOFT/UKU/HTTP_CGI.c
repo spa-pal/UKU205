@@ -111,7 +111,7 @@ void cgi_process_var (U8 *qs) {
   U8 *var;
   int s[4];
 
-	web_plazma[1]++;
+	//web_plazma[1]++;
 
   var = (U8 *)alloc_mem (40);
   do {
@@ -189,8 +189,8 @@ void cgi_process_data (U8 code, U8 *dat, U16 len) {
 U8 *varr[3];
 U8 i;
 
-web_plazma[2]++;
-web_plazma[3]+=len;
+//web_plazma[2]++;
+//web_plazma[3]+=len;
 
 
 
@@ -226,7 +226,7 @@ do
     /* Parse all returned parameters. */
 	if(i==1)dat = http_get_var (dat, varr[i++], 150);
     else dat = http_get_var (dat, varr[i++], 40);
-	web_plazma[0]++;
+	//web_plazma[0]++;
 	}
 while (dat);
 
@@ -237,7 +237,7 @@ while (dat);
 		if (str_scomp (varr[0], "parol") == __TRUE)
 			{
 			char str_buff[4];
-        	web_plazma[1]++;
+        	//web_plazma[1]++;
 			
 			if ((str_scomp (varr[0]+6, snmp_web_passw) == __TRUE)&&(len == 9)) 
 				{
@@ -255,7 +255,9 @@ while (dat);
 			if(strstr (varr[1], "value="))
 				{
 				
-				web_plazma[4]=22;
+				//web_plazma[4]=22;
+
+				short input_param;
 				if(strstr (varr[0], "serno"))
 					{
 					sscanf ((const char *)varr[1]+6, "%d",&web_param_input);
@@ -279,7 +281,10 @@ while (dat);
 				else if(strstr (varr[0], "main_bps_"))
 					{
 					sscanf ((const char *)varr[1]+6, "%d",&web_param_input);
-					lc640_write_int(EE_MAIN_BPS,((short)(web_param_input&0x00000001UL))-1);
+					input_param=(short)web_param_input;
+					//web_plazma[0] = (char)web_param_input;
+					gran(&input_param,1,2);
+					lc640_write_int(EE_MAIN_BPS,input_param-1);
 
 					}
 				else if(strstr (varr[0], "zv_on_"))
@@ -628,7 +633,9 @@ while (dat);
 				else if(strstr (varr[0], "numist_"))
 					{
 					sscanf ((const char *)varr[1]+6, "%d",&web_param_input);
-					lc640_write_int(EE_NUMIST,(short)(web_param_input&0x000000ffUL));
+					input_param=(short)web_param_input;
+					gran(&input_param,1,2);
+					lc640_write_int(EE_NUMIST,(short)input_param);
 					} /*
 				else if(strstr (varr[0], "numphase_"))
 					{
@@ -639,12 +646,16 @@ while (dat);
 				else if(strstr (varr[0], "numsk_"))
 					{
 					sscanf ((const char *)varr[1]+6, "%d",&web_param_input);
-					lc640_write_int(EE_NUMSK,(short)web_param_input);
+					input_param=(short)web_param_input;
+					gran(&input_param,0,4);
+					lc640_write_int(EE_NUMSK,input_param);
 					}  
 				else if(strstr (varr[0], "numdt_"))
 					{
 					sscanf ((const char *)varr[1]+6, "%d",&web_param_input);
-					lc640_write_int(EE_NUMDT,(short)web_param_input);
+					input_param=(short)web_param_input;
+					gran(&input_param,0,1);
+					lc640_write_int(EE_NUMDT,input_param);
 					}  /*
 				else if(strstr (varr[0], "nummakb_"))
 					{
@@ -811,50 +822,11 @@ U16 cgi_func (U8 *env, U8 *buf, U16 buflen, U32 *pcgi) {
 				
 				switch (env[2]) {
 					case '1':
-						//len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("¿¡¬√ƒ≈®∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ‹€⁄›ﬁﬂ1?∞‡·‚„‰Â∏ÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘¸˚˙˝˛ˇ"));
-						#if(UKU_VERSION==300)		
-						if(AUSW_MAIN==2424)			len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/24-24¿"));
-						else if(AUSW_MAIN==2412)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/24-12¿"));
-						else if(AUSW_MAIN==6010)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60-10¿"));
-						else if(AUSW_MAIN==4810)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48-10¿"));
-						else if(AUSW_MAIN==6005)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60-5¿"));
-						else if(AUSW_MAIN==4805)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48-5¿"));
+						if(AUSW_MAIN==6006)			len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60¬-6¿-1U"));
+						else if(AUSW_MAIN==6012)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60¬-12¿-1U"));
+						else if(AUSW_MAIN==4806)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48¬-6¿-1U"));
+						else if(AUSW_MAIN==4812)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48¬-12¿-1U"));
 						else 						len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("ÏÓ‰ÂÎ¸ ÌÂÓÔÂ‰ÂÎÂÌ‡"));
-						#endif //(UKU_VERSION==300)				{
-
-						#if(UKU_VERSION==900)		
-						if(AUSW_MAIN==2450)			len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/24-50¿"));
-						else if(AUSW_MAIN==2425)	
-							{
-							if(NUMIST==1)			len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/24-25¿-1¡œ—"));
-							else if(NUMIST==2)		len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/24-25¿-2¡œ—"));
-							}
-						else if(AUSW_MAIN==6024)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60-24¿"));
-						else if(AUSW_MAIN==6012)	
-							{
-							if(NUMIST==1)			len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60-12¿-1¡œ—"));
-							else if(NUMIST==2)		len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60-12¿-2¡œ—"));
-							}
-						else if(AUSW_MAIN==4824)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48-24¿"));
-						else if(AUSW_MAIN==4812)	
-							{
-							if(NUMIST==1)			len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48-12¿-1¡œ—"));
-							else if(NUMIST==2)		len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48-12¿-2¡œ—"));
-							}
-						else if(AUSW_MAIN==6030)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60-30¿"));
-						else if(AUSW_MAIN==6015)	
-							{
-							if(NUMIST==1)			len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60-15¿-1¡œ—"));
-							else if(NUMIST==2)		len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/60-15¿-2¡œ—"));
-							}
-						else if(AUSW_MAIN==4840)	len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48-40¿"));
-						else if(AUSW_MAIN==4820)	
-							{
-							if(NUMIST==1)			len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48-20¿-1¡œ—"));
-							else if(NUMIST==2)		len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("»¡›œ220/48-20¿-2¡œ—"));
-							}
-						else 						len = sprintf((char *)buf,(const char *)&env[4],pal_cyr_coder("ÏÓ‰ÂÎ¸ ÌÂÓÔÂ‰ÂÎÂÌ‡"));
-						#endif //(UKU_VERSION==900)				{
 					break;
 			        case '2':
 			          	len = sprintf((char *)buf,(const char *)&env[4],AUSW_MAIN_NUMBER);
@@ -1671,13 +1643,13 @@ U16 cgi_func (U8 *env, U8 *buf, U16 buflen, U32 *pcgi) {
 
     case '2':
       /* Button state - xml file 'button.cgx' */
-	  web_plazma[0]++;
+	  //web_plazma[0]++;
       len = sprintf((char *)buf,"<checkbox><id>button%c</id><on>%s</on></checkbox>",
                     env[1],(/*web_cnt_main*/3 & (1 << (env[1]-'0'))) ? "true" : "false");
       break;
     case '3':
       /* Button state - xml file 'button.cgx' */
-	  web_plazma[0]++;
+	  //web_plazma[0]++;
       len = sprintf((char *)buf,"<checkbox><id>button%c</id><on>%s</on></checkbox>",
                     env[1],(/*web_cnt_main*/ 6 & (1 << (env[1]-'0'))) ? "true" : "false");
       break;

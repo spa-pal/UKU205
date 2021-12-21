@@ -42,6 +42,9 @@ extern signed short snmp_bat_cell1_voltage, snmp_bat_cell2_voltage, snmp_bat_cel
 extern signed short snmp_bat_cell1_imbalance, snmp_bat_cell2_imbalance, snmp_bat_cell3_imbalance, snmp_bat_cell4_imbalance, snmp_bat_cell5_imbalance;
 extern signed short snmp_bat_cell1_imbalance_stat, snmp_bat_cell2_imbalance_stat, snmp_bat_cell3_imbalance_stat, snmp_bat_cell4_imbalance_stat, snmp_bat_cell5_imbalance_stat;
 
+//Состояние датчика внешней температуры
+extern signed short snmp_ext_temper;
+extern signed short snmp_ext_temper_sensor_invalid;
 
 //Состояние предохранителей
 extern signed short snmp_fuse_av_stat[3];

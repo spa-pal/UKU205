@@ -783,7 +783,7 @@ AВ: Аварийность входа (1 - активно), ("Авария").*/
      	memo_out2[3]=0x03;
      	memo_out2[4]=0x0c;
      	memo_out2[5]=lc640_read_int(CNT_EVENT_LOG);
-		plazma_suzun=memo_out2[5];
+		//plazma_suzun=memo_out2[5];
          	memo_out2[6]=crc_87(memo_out2,6);
 		memo_out2[7]=crc_95(memo_out2,6);
      	uart_out_adr2(memo_out2,8); 		

@@ -43,6 +43,7 @@ TMAX=lc640_read_int(EE_TMAX);
 //C_BAT=lc640_read_int(EE_C_BAT);
 USIGN=lc640_read_int(EE_USIGN);
 UMN=lc640_read_int(EE_UMN);
+UMAXN=lc640_read_int(EE_UMAXN);
 ZV_ON=lc640_read_int(EE_ZV_ON);
 IKB=lc640_read_int(EE_IKB);
 KVZ=lc640_read_int(EE_KVZ);
@@ -116,8 +117,8 @@ ETH_TRAP5_IP_4=lc640_read_int(EE_ETH_TRAP5_IP_4);
 ETH_SNMP_PORT_READ=lc640_read_int(EE_ETH_SNMP_PORT_READ);
 ETH_SNMP_PORT_WRITE=lc640_read_int(EE_ETH_SNMP_PORT_WRITE);
 
-if((ind==iMn)||(ind==iAusw)||(ind==iAusw_set))
-	{
+/*if((ind==iMn)||(ind==iAusw)||(ind==iAusw_set))
+	{  */
 	AUSW_MAIN=lc640_read_int(EE_AUSW_MAIN);
 	AUSW_MAIN_NUMBER=lc640_read_long(EE_AUSW_MAIN_NUMBER);
 	AUSW_DAY=lc640_read_int(EE_AUSW_DAY);
@@ -132,7 +133,7 @@ if((ind==iMn)||(ind==iAusw)||(ind==iAusw_set))
 	AUSW_UKU=lc640_read_int(EE_AUSW_UKU);
 	AUSW_UKU_SUB=lc640_read_int(EE_AUSW_UKU_SUB);
 	AUSW_UKU_NUMBER=lc640_read_long(EE_AUSW_UKU_NUMBER);			
-	}
+/*	} */
 
 TMAX_EXT_EN[0]=lc640_read_int(EE_TMAX_EXT_EN0);
 TMAX_EXT[0]=lc640_read_int(EE_TMAX_EXT0);
@@ -198,6 +199,11 @@ for(i=0;i<3;i++)
 	{
 	snmp_web_passw[i]=lc640_read(EE_WEB_PASSWORD+(i*2));
 	snmp_web_passw[3]=0;
+	}
+for(i=0;i<70;i++)
+	{
+	place_holder[i]=lc640_read(EE_HTTP_LOCATION+i);
+	place_holder[69]=0;
 	}
 }
 
