@@ -643,6 +643,7 @@ if(spc_stat==spc_VZ)
 		{
 		spc_stat=spc_OFF;
 		vz_mem_hndl((unsigned short)cnt_vz_sec/SEC_IN_HOUR);
+		snmp_trap_send("Equalization charge completed successfully",2,2,2);
 		}
 	}
 else if(spc_stat==spc_KE/*p1*/)
@@ -659,6 +660,7 @@ else if(spc_stat==spc_KE/*p1*/)
 			lc640_write_int(EE_ZAR_CNT,0);
 			zar_cnt=0;
 			ke_mem_hndl(lc640_read_int(EE_ZAR_CNT_KE));
+			snmp_trap_send("Battery capacity monitoring completed successfully",2,2,2);
 			} 
 		}
 	else cnt_spc_drv_ke=0;	
@@ -2453,6 +2455,7 @@ else
 		*(((char*)(&(ke_date[1])))+3)=*(((char*)&temp_temp)+1);
 				
 		}
+	snmp_trap_send("Battery capacity monitoring started",2,2,2);
 	return 0;
 	}
 }

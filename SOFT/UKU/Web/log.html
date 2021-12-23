@@ -92,7 +92,12 @@
 				else if(input[2]=='W'){output[0]="Разряд батареи №" + batNum + ".";}
 				else if(input[2]=='Z'){output[0]="Выравнивающий заряд батареи №" + batNum + ".";}
 				else if(input[2]=='K'){output[0]="Контроль емкости батареи №" + batNum + ".";}
-			}			
+			}
+
+			else if(input[0]=='F'){
+				output[0]="Авария предохранителя №";
+				output[0]+=(input[1].charCodeAt(0)+1)+". ";
+			}						
 
 			return output;
 		}

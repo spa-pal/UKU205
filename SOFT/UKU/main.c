@@ -4464,7 +4464,11 @@ else if(ind==iKe)
 		{
 		if(sub_ind==0)
 			{
-			if(spc_stat==spc_KE/*p1*/) spc_stat=spc_OFF;
+			if(spc_stat==spc_KE/*p1*/) 
+				{
+				spc_stat=spc_OFF;
+				snmp_trap_send("Battery capacity monitoring interrupted manually",2,2,2);
+				}
 			else if (ke_start()==1)
 				{
 				tree_up(iKednd,0,0,0);
@@ -4530,6 +4534,7 @@ else if(ind==iVz)
 			{
 			spc_stat=spc_OFF;
 			vz_mem_hndl(0);
+			snmp_trap_send("Equalization charge interrupted manually",2,2,2);
 			}
 		else if(!(St&0x03)&&(spc_stat==spc_OFF))
 			{
@@ -4537,6 +4542,7 @@ else if(ind==iVz)
 			cnt_vz_sec=0L;
 			cnt_vz_sec_=(SEC_IN_HOUR*VZ_HR);
 			vz_mem_hndl(1);
+			snmp_trap_send("Equalization charge started",2,2,2);
 			}
 		} 	  		
 	else if(sub_ind==2)
