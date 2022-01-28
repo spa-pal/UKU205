@@ -8321,8 +8321,8 @@ else if((ind==iPrl_bat_in_out)||(ind==iSet_prl)||(ind==iK_prl)
 	  		else 
 				{
 				ind=iDnd;
-		          ret_ind(b[--ptr_ind].i,b[ptr_ind].s_i,5);
-     	          }
+		        ret_ind(b[--ptr_ind].i,b[ptr_ind].s_i,5);
+     	        }
 			}
 		}
 	}
