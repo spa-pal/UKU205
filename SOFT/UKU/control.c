@@ -702,7 +702,7 @@ for (i=0;i<1;i++)
 		if(tout_max_cnt[i]<120)
 			{
 			tout_max_cnt[i]++;
-			if((tout_max_cnt[i]>=120)&&(!TMAX_EXT_EN[i]))
+			if((tout_max_cnt[i]>=120)&&(!TMAX_EXT_EN[i])&&(tout_stat[i]==tNORM))
 				{
 				tout_stat[i]=tMAX;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,1,tout[i]);
@@ -723,7 +723,7 @@ for (i=0;i<1;i++)
 		if(tout_max_cnt[i]>0)
 			{
 			tout_max_cnt[i]--;
-			if((tout_max_cnt[i]<=0)&&(!TMAX_EXT_EN[i]))
+			if((tout_max_cnt[i]<=0)&&(!TMAX_EXT_EN[i])&&(tout_stat[i]==tMAX))
 				{
 				tout_stat[i]=tNORM;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,0,tout[i]);
@@ -748,7 +748,7 @@ for (i=0;i<1;i++)
 		if(tout_min_cnt[i]<120)
 			{
 			tout_min_cnt[i]++;
-			if((tout_min_cnt[i]>=120)&&(!TMIN_EXT_EN[i]))
+			if((tout_min_cnt[i]>=120)&&(!TMIN_EXT_EN[i])&&(tout_stat[i]==tNORM))
 				{
 				tout_stat[i]=tMIN;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,2,tout[i]);
@@ -769,7 +769,7 @@ for (i=0;i<1;i++)
 		if(tout_min_cnt[i]>0)
 			{
 			tout_min_cnt[i]--;
-			if((tout_min_cnt[i]<=0)&&(!TMIN_EXT_EN[i]))
+			if((tout_min_cnt[i]<=0)&&(!TMIN_EXT_EN[i])&&(tout_stat[i]==tMIN))
 				{
 				tout_stat[i]=tNORM;
 				if(!T_EXT_SNMP_TRAP_EN[i])//rs232_transmit_of_temper(i,0,tout[i]);

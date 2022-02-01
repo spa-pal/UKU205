@@ -98,7 +98,10 @@
 				output[0]="Авария предохранителя №";
 				output[0]+=(input[1].charCodeAt(0)+1)+". ";
 			}						
-
+			
+			else {
+				output[0]=input[0]+input[1]+input[2];
+			}
 			return output;
 		}
 

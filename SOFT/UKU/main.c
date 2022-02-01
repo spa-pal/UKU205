@@ -693,6 +693,12 @@ if(St_[1]&0x1c)
 	sub_cnt_max++;	
 	}	
 
+if(NDB)
+	{
+	sub_ptrs[i++]=" ДТ батареи неиспр. ";
+	sub_cnt_max++;	
+	}
+
 if(ND_out[0])
 	{
 	sub_ptrs[i++]="  ДТ N1 неисправен  ";
@@ -4369,10 +4375,19 @@ else if(ind==iSrc)
 	     tree_down(0,0);
 	     ret(0);	     
 	     }
-	else if(but==butD_)
+	else if(but==butD_)	
 		{
 		sub_ind=2;
-		}		     
+		}
+	
+	else if(but==butR_)	
+		{
+		//avar_fuse_hndl(sub_ind1);
+		}	
+	else if(but==butL_)	
+		{
+		//avar_fuse_hndl(sub_ind1+2);
+		}			     
      }
 
 else if(ind==iLoad)
@@ -4469,25 +4484,30 @@ else if(ind==iKe)
 				spc_stat=spc_OFF;
 				snmp_trap_send("Battery capacity monitoring interrupted manually",2,2,2);
 				}
-			else if (ke_start()==1)
+			else 
 				{
-				tree_up(iKednd,0,0,0);
-				ret(15);
-				}
-			else if (ke_start()==2)
-				{
-				tree_up(iKednd,1,0,0);
-				ret(15);				
-				}
-			else if (ke_start()==3)
-				{
-				tree_up(iKednd,2,0,0);
-				ret(15);				
-				}	
-			else if (ke_start()==4)
-				{
-				tree_up(iKednd,3,0,0);
-				ret(15);				
+				char tt;
+				tt=ke_start();
+				if (tt==1)
+					{
+					tree_up(iKednd,0,0,0);
+					ret(15);
+					}
+				else if (tt==2)
+					{
+					tree_up(iKednd,1,0,0);
+					ret(15);				
+					}
+				else if (tt==3)
+					{
+					tree_up(iKednd,2,0,0);
+					ret(15);				
+					}	
+				else if (tt==4)
+					{
+					tree_up(iKednd,3,0,0);
+					ret(15);				
+					}
 				}										
 			} 	             
 		else if(sub_ind==1)
